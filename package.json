@@ -1,7 +1,4 @@
 {
-    "name": "webshop-socket-chat",
-    "version": "1.0",
-    "description": "Websecurity 2018",
     "dependencies": {
         "express": "4.16.2",
         "chalk": "2.3.2",
