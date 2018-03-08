@@ -26,6 +26,13 @@ global.gLog = (status, message) => {
     }
 }
 
+// Load default page (index)
+app.get('/', (req, res) => {
+ 
+    return res.sendFile(__dirname + '/test/index.html');
+
+});
+
 // UNIX socket awaiting connections on given port
 app.listen(8080, err => {
     if(err) {
