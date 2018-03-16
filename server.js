@@ -24,7 +24,7 @@ global.gLog = (status, message) => {
         break;
 
     }
-}
+};
 
 // Load default page (index)
 app.get('/', (req, res) => {
