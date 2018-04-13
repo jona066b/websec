@@ -1,22 +1,38 @@
+var _DbController = {};
+var _dbConnection = require(__dirname + "/databaseconnection.js");
 
-var databaseController = {};
-
-controller.queryWithoutParams = ( sQuery, fCallback ) =>{
-  global.db.query( sQuery, ( err, result )=>{
-   if(err){
-       console.log(err);
-       return fCallback(true, err);
-   } 
-      return fCallback(false, result);
-  });  
-};
-
-controller.queryWitParams = ( sQuery, params, fCallback ) =>{
-    global.db.query( sQuery, params, ( err, result )=>{
+_DbController.query = (sQuery, params, fCallback) => {
+    var jResult = {};
+    global.gPool.getConnection(function(err, connection){
         if(err){
-            console.log(err);
-            return fCallback(true, err);
-        }
-        return fCallback(false, result);
+            jResult = JSON.stringify(err);
+            process.exit();
+            return fCallback(true, jResult);
+        } else {
+            if(params.length > 0){
+                connection.query(sQuery, params, (err, jData) => {
+                    if(err){
+                        jResult = JSON.stringify(err);
+                        connection.release();
+                        return fCallback(true, jResult);
+                    }
+                    jResult = JSON.stringify(jData);
+                    connection.release();
+                    return fCallback(false, jResult); 
+                });
+            } else {
+                connection.query(sQuery, (err, jData) => {
+                    if(err){
+                        jResult = JSON.stringify(err);
+                        connection.release();
+                        return fCallback(true, jResult);
+                    }
+                    jResult = JSON.stringify(jData);
+                    connection.release();
+                    return fCallback(false, jResult); 
+                });
+            }
+        }      
     });
-};
+}
+module.exports = _DbController;

@@ -1,19 +1,11 @@
-var mysql = require('mysql');
+const _mysql = require("mysql");
+global.gPool = null;
 
-global.db = null;
-
- var con = mysql.createConnection({
-    host: "localhost",
-    user: "admin",
-    password: "",
-    database: "security"
+const _pool = _mysql.createPool({
+    host: 'localhost',
+    user: 'sola',
+    password: '951025',
+    database: 'websec'
 });
 
-con.connect( err => {
-    if(err){
-        console.log('error', err);
-        process.exit(); //destroy the process !important so you prevent further usage of the db
-    }
-    console.log("connected");
-    global.db = con;
-});
+global.gPool = _pool;
