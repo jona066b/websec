@@ -24,12 +24,14 @@ app.use(bodyParser.json({ type: 'application/*+json' }));
 var accountRoute = require(__dirname + "/routes/account.js");
 var productRoute = require(__dirname + "/routes/product.js");
 var adminRoute = require(__dirname + "/routes/admin.js");
+var adminRoute = require(__dirname + "/routes/order.js");
 /****************************************************/
 
 /***********************Routes***********************/
 app.use("/user", accountRoute);
 app.use("/product", productRoute);
 app.use("/admin", adminRoute);
+app.use("/order", adminRoute);
 /****************************************************/
 
 
