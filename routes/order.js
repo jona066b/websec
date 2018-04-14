@@ -18,10 +18,36 @@ router.get("/:orderNo", function(req,res,next){
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     }
     else if (jSession != null && jSession.isLoggedIn == true && jSession.isInRole == "Support"){
-        var productNo = req.params.productNo;
+        var orderNo = req.params.orderNo;
         var sQuery = "select * from order WHERE orderNo = ?";
 
-        dbController.query(sQuery, [productNo], (err, sjData) => {
+        dbController.query(sQuery, [orderNo], (err, sjData) => {
+            if(err){
+                console.log(err);
+                return res.send(JSON.stringify(err));
+            }
+            console.log(sjData);
+            return res.send(sjData);
+        });
+    }
+    else {
+        res.status(401);
+        res.send(JSON.stringify({response: "Unauthorized access!"}));
+    }
+});
+
+//Find all orders by a specific user
+router.get("/:userNo", function(req,res,next){
+    var jSession = JSON.parse(global.gSession);
+    if(jSession == null){
+        res.status(403);
+        res.send(JSON.stringify({response: "You need to be logged in!"}));
+    }
+    else if (jSession != null && jSession.isLoggedIn == true && jSession.isInRole == "Support"){
+        var userNo = req.params.userNo;
+        var sQuery = "select * from order as o join user as u on o.userNo = u.userNo";
+
+        dbController.query(sQuery, [userNo], (err, sjData) => {
             if(err){
                 console.log(err);
                 return res.send(JSON.stringify(err));
