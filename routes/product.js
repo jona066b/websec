@@ -9,6 +9,7 @@ var account = require(__dirname + "/account.js");
 /******************************************************/
 
 /************************APIS*************************/
+// Get all products
 router.get("/", function(req, res, next){
     var sQuery = "select * from product";
     dbController.query(sQuery, (err, sjData) => {
@@ -22,6 +23,7 @@ router.get("/", function(req, res, next){
     });
 });
 
+// Create a product
 router.post("/", function(req,res,next){
     var jSession = JSON.parse(global.gSession);
     if(jSession == null){
@@ -59,6 +61,7 @@ router.post("/", function(req,res,next){
     }
 });
 
+// Update a product
 router.put("/:productNo",function(req,res,next){
     var jSession = JSON.parse(global.gSession);
     if(jSession == null){
@@ -99,6 +102,7 @@ router.put("/:productNo",function(req,res,next){
    
 });
 
+// Delete a product
 router.delete("/:productNo", function(req,res,next){
     var jSession = JSON.parse(global.gSession);
     if(jSession == null){
@@ -109,6 +113,32 @@ router.delete("/:productNo", function(req,res,next){
         var productNo = req.params.productNo;
         var sQuery = "DELETE FROM product WHERE productNo = ?";
     
+        dbController.query(sQuery, [productNo], (err, sjData) => {
+            if(err){
+                console.log(err);
+                return res.send(JSON.stringify(err));
+            }
+            console.log(sjData);
+            return res.send(sjData);
+        });
+    }
+    else {
+        res.status(401);
+        res.send(JSON.stringify({response: "Unauthorized access!"}));
+    }
+});
+
+// Search for a specific product by product id
+router.get("/:productNo", function(req,res,next){
+    var jSession = JSON.parse(global.gSession);
+    if(jSession == null){
+        res.status(403);
+        res.send(JSON.stringify({response: "You need to be logged in!"}));
+    }
+    else if (jSession != null && jSession.isLoggedIn == true && jSession.isInRole == "Admin"){
+        var productNo = req.params.productNo;
+        var sQuery = "select * from product WHERE productNo = ?";
+
         dbController.query(sQuery, [productNo], (err, sjData) => {
             if(err){
                 console.log(err);
