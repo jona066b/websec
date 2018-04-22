@@ -17,9 +17,9 @@ var generateHash = function(password, salt){
 hasher.hashPw = (password) => {
     var salt = generateSalt();
     var pwData = generateHash(password, salt);
-    var jResult = JSON.stringify({salt: salt, data: pwData})
+    var jResult = JSON.stringify({salt: salt, data: pwData});
     return jResult;
-}
+};
 
 hasher.verifyPw = (password, dbSalt, dbHash) => {
     var iterations = 10000;
@@ -33,6 +33,6 @@ hasher.verifyPw = (password, dbSalt, dbHash) => {
         return jResult;
     }
     
-}
+};
 
 module.exports = hasher;
