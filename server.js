@@ -30,6 +30,7 @@ app.use(expressSanitizer());
 var accountRoute = require(__dirname + "/routes/account.js");
 var productRoute = require(__dirname + "/routes/product.js");
 var adminRoute = require(__dirname + "/routes/admin.js");
+var orderRoute = require(__dirname + "/routes/order.js");
 
 /****************************************************/
 
@@ -45,6 +46,7 @@ app.get("/login", (req, res) => {
 app.use("/user", accountRoute);
 app.use("/product", productRoute);
 app.use("/admin", adminRoute);
+app.use("/order", orderRoute);
 /****************************************************/
 
 

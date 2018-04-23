@@ -134,4 +134,35 @@ router.delete("/:productNo", function(req,res,next){
         res.send(JSON.stringify({response: "Unauthorized access!"}));
     }
 });
+
+// Search for a specific product by product id
+
+router.get("/:productNo", function(req,res,next){
+    if(req.session == null){
+        res.status(403);
+        res.send(JSON.stringify({response: "You need to be logged in!"}));
+    }
+    else if (req.session != null && req.session.isLoggedIn == true && req.session.isInRole == "Admin"){
+        var optionalParams = [];
+        optionalParams.push(req.params.productNo);
+        var checkedParams = parameterChecker.check(req, optionalParams);
+
+        var productNo = checkedParams[0];
+        var sQuery = "select * from product WHERE productNo = ?";
+
+        dbController.query(sQuery, [productNo], (err, sjData) => {
+            if(err){
+                console.log(err);
+                return res.send(JSON.stringify(err));
+            }
+            console.log(sjData);
+            return res.send(sjData);
+        });
+    }
+    else {
+        res.status(401);
+        res.send(JSON.stringify({response: "Unauthorized access!"}));
+    }
+});
+
 module.exports = router;
