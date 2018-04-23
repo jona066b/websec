@@ -18,8 +18,12 @@ router.get("/:orderNo", function(req,res,next){
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     }
     else if (jSession != null && jSession.isLoggedIn == true && jSession.isInRole == "Support"){
-        var orderNo = req.params.orderNo;
-        var sQuery = "select * from order WHERE orderNo = ?";
+        var optionalParams = []; 
+        optionalParams.push(req.params.orderNo); 
+        var checkedParams = parameterChecker.check(req, optionalParams); 
+
+        var orderNo = checkedParams[0];
+        var sQuery = "SELECT * from order WHERE orderNo = ?";
 
         dbController.query(sQuery, [orderNo], (err, sjData) => {
             if(err){
@@ -44,8 +48,12 @@ router.get("/:userNo", function(req,res,next){
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     }
     else if (jSession != null && jSession.isLoggedIn == true && jSession.isInRole == "Support"){
-        var userNo = req.params.userNo;
-        var sQuery = "select * from order as o join user as u on o.userNo = u.userNo";
+        var optionalParams = []; 
+        optionalParams.push(req.params.userNo); 
+        var checkedParams = parameterChecker.check(req, optionalParams); 
+
+        var userNo = checkedParams[0];
+        var sQuery = "SELECT * FROM order AS o JOIN user AS u ON o.userNo = u.userNo";
 
         dbController.query(sQuery, [userNo], (err, sjData) => {
             if(err){

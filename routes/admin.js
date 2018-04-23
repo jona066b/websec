@@ -5,17 +5,16 @@ var router = express.Router();
 
 /************************Modules************************/
 var dbController = require("../database/databasecontroller.js");
-var account = require(__dirname + "/account.js");
 /******************************************************/
 
 router.get("/", function(req, res, next){
-    var jSession = JSON.parse(global.gSession);
-    if(jSession == null){
+    console.log(req.session);
+    if(req.session == null){
         res.status(403);
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     }
-    else if(jSession != null && jSession.isLoggedIn == true && jSession.isInRole == "Admin"){
-        var sQuery = "select userNo, name, address, phone, email, userName, image from user as u join role as r on u.roleNo = r.roleNo where r.roleName = ?";
+    else if(req.session  != null && req.session.isLoggedIn == true && req.session.isInRole == "Admin"){
+        var sQuery = "SELECT userNo, name, address, phone, email, userName, image FROM user AS u JOIN role AS r ON u.roleNo = r.roleNo WHERE r.roleName = ?";
         var roleName = "Support";
     
         dbController.query(sQuery, [roleName], (err, sjData) => {
@@ -30,17 +29,21 @@ router.get("/", function(req, res, next){
         res.status(401);
         res.send(JSON.stringify({response: "Unauthorized access!"}));
     }
+    
 });
 
 router.put("/:userNo",function(req, res, next){
-    var jSession = JSON.parse(global.gSession);
-    if(jSession == null){
+    if(req.session == null){
         res.status(403);
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     }
-    else if(jSession != null && jSession.isLoggedIn == true && jSession.isInRole == "Admin"){
-        var userNo = req.params.userNo;
-        var roleName = req.body.roleName;
+    else if(req.session != null && req.session.isLoggedIn == true && req.session.isInRole == "Admin"){
+        var optionalParams = []; 
+        optionalParams.push(req.params.userNo, req.body.roleName); 
+        var checkedParams = parameterChecker.check(req, optionalParams); 
+
+        var userNo = checkedParams[0];
+        var roleName = checkedParams[1];
         var sp = "call UpdateRoles (?, ?);"
         dbController.query(sp, [userNo, roleName], (err, sjData) => {
             if(err){
