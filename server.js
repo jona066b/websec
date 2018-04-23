@@ -4,6 +4,8 @@ var bodyParser = require("body-parser");
 var chalk = require("chalk");
 var session = require('express-session');
 var cookieParser = require("cookie-parser");
+var expressSanitizer = require("express-sanitizer");
+var fs = require("fs");
 
 var app = express();
 if (app.get('env') === 'production') {
@@ -12,26 +14,37 @@ if (app.get('env') === 'production') {
   }
 app.use(session({
   secret: 'KjdsijWERR45S',
-  resave: false,
+  rolling: true,    
+  resave: true,
   saveUninitialized: true,
-  cookie: { secure: false }
-}))
-app.use(cookieParser());
+  cookie: { secure: false, maxAge: 60000, httpOnly: true }
+}));
+app.use(cookieParser('KjdsijWERR45S'));
 app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/*+json' }));
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use("/public", express.static("public"));
+app.use(expressSanitizer());
 
 /***********************Modules***********************/
 var accountRoute = require(__dirname + "/routes/account.js");
 var productRoute = require(__dirname + "/routes/product.js");
 var adminRoute = require(__dirname + "/routes/admin.js");
-var orderRoute = require(__dirname + "/routes/order.js");
+
+/****************************************************/
+
+/***********************Views***********************/
+app.get("/login", (req, res) => {
+    fs.readFile(__dirname + "/views/login.html", "utf8", (ree, data) => {
+        res.send(data);
+    });
+});
 /****************************************************/
 
 /***********************Routes***********************/
 app.use("/user", accountRoute);
 app.use("/product", productRoute);
 app.use("/admin", adminRoute);
-app.use("/order", orderRoute);
 /****************************************************/
 
 
@@ -59,6 +72,8 @@ global.gLog = (status, message) => {
 
     }
 };
+
+
 // UNIX socket awaiting connections on given port
 app.listen(8080, err => {
     if(err) {
