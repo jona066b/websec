@@ -95,3 +95,9 @@ body,html{
     justify-content: flex-end;
     flex-direction: column;
 }
+
+.futures-icon-one {
+    width: 46px;
+    height: 44px;
+    background: url("../images/spriteShopIcons.png") 0 0;
+}
