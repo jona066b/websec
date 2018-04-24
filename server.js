@@ -6,6 +6,7 @@ var session = require('express-session');
 var cookieParser = require("cookie-parser");
 var expressSanitizer = require("express-sanitizer");
 var fs = require("fs");
+var https = require("https");
 
 var app = express();
 if (app.get('env') === 'production') {
@@ -31,7 +32,15 @@ var accountRoute = require(__dirname + "/routes/account.js");
 var productRoute = require(__dirname + "/routes/product.js");
 var adminRoute = require(__dirname + "/routes/admin.js");
 var orderRoute = require(__dirname + "/routes/order.js");
+const key = fs.readFileSync("../websec/certificate/WebShop.key", "utf8");
+const cert = fs.readFileSync("../websec/certificate/WebShop.crt", "utf8");
+const ca = fs.readFileSync("../websec/certificate/ca.crt", "utf8");
 
+const options = {
+    key: key,
+    cert: cert,
+    ca: ca
+};
 /****************************************************/
 
 /***********************Views***********************/
@@ -77,11 +86,14 @@ global.gLog = (status, message) => {
 
 
 // UNIX socket awaiting connections on given port
-app.listen(8080, err => {
+
+var httpsServer = https.createServer(options, app);
+httpsServer.listen(8443, err => {
     if(err) {
         gLog('err', 'Cannot use that port');
         return false;
     }
-    gLog('ok', 'Server is listening to port 8080');
+    gLog('ok', 'Server is listening to port 8443');
 });
+
 /****************************************************/
