@@ -5,6 +5,7 @@
         "mysql": "2.15.0",
         "express-session": "1.15.6",
         "cookie-parser": "1.4.3",
-        "body-parser": "1.18.2"
+        "body-parser": "1.18.2",
+        "express-sanitizer": "1.0.4"
     }
 }

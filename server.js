@@ -22,7 +22,7 @@ app.use(session({
 app.use(cookieParser('KjdsijWERR45S'));
 app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/*+json' }));
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/public", express.static("public"));
 app.use(expressSanitizer());
 
@@ -35,10 +35,20 @@ var orderRoute = require(__dirname + "/routes/order.js");
 /****************************************************/
 
 /***********************Views***********************/
-app.get("/login", (req, res) => {
-    fs.readFile(__dirname + "/views/login.html", "utf8", (ree, data) => {
-        res.send(data);
-    });
+app.get("/", (req, res) => {
+
+    var sTopHtml = fs.readFileSync( __dirname + '/public/components/top.html', 'utf8' );
+    var sMainHtml = fs.readFileSync( __dirname + '/views/index.html', 'utf8' );
+    var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
+
+    //replace placeholders
+
+    sTopHtml = sTopHtml.replace('{{title}}','Web shop home page');
+    sTopHtml = sTopHtml.replace('{{active-home}}',' active');
+    sTopHtml = sTopHtml.replace(/{{active-.*}}/g ,'');
+    sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/login.js"></script>' +
+        '<script src="../public/javascript/logout.js"></script><script src="../public/javascript/register.js"></script>');
+    res.send( sTopHtml + sMainHtml + sBottomHtml );
 });
 /****************************************************/
 

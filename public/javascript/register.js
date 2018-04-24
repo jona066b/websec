@@ -2,24 +2,43 @@
 $(function() {
     // Initialize form validation on the registration form.
     // It has the name attribute "registration"
-    $("#frmLogin").validate({
+    $("#frmRegister").validate({
         // Specify validation rules
         rules: {
             // The key name on the left side is the name attribute
             // of an input field. Validation rules are defined
             // on the right side
-            userName: "required",
+            name:       "required",
+            address:    "required",
+            phone:      {
+                required: false
+            },
+            email: {
+                required: true,
+                email: true
+            },
+            userName:   "required",
             password: {
                 required: true,
                 //minlength: 5
+            },
+            image: {
+                required: false,
+                //accept: "image/jpeg, image/png"
             }
         },
         // Specify validation error messages
         messages: {
+            name: "Please enter your name",
+            address: "Please enter your address",
             userName: "Please enter your user name",
             password: {
                 required: "Please provide a password",
                 //minlength: "Your password must be at least 5 characters long"
+            },
+            email: {
+                required: "We need your email address to contact you",
+                email: "Your email address must be in the format of name@domain.com"
             }
         },
         // Make sure the form is submitted to the destination defined
@@ -30,24 +49,20 @@ $(function() {
     });
 });
 
-$("#btnLogin").click(function () {
+$("#btnRegister").click(function () {
 
-    var form = $("#frmLogin");
+    var form = $("#frmRegister");
     if(form.valid()){
 
         var oFrmUser = form.serialize();
         console.log(oFrmUser);
 
-        $.post( '/user/login' , oFrmUser , function( data ){
+        $.post( '/user' , oFrmUser , function( data ){
         }).done(function() {
             // TO DO ON DONE
             console.log("Success");
-            $('#login-err-msg').text('');
-            $('#modalLoginForm').modal("toggle");
-            $('#profile-link').removeClass('d-none');
-            $( "#btn-logIn").addClass('d-none');
-            $( "#btn-logOut").removeClass('d-none');
-            $( "#btn-register").addClass('d-none');
+            $('#register-err-msg').text('');
+            $('#register-success-msg').removeClass('d-none');
 
         }).fail(function(data, textStatus, xhr) {
             //This shows status code eg. 403
@@ -63,4 +78,11 @@ $("#btnLogin").click(function () {
             console.log("ended");
         });
     }
+});
+
+$("#proceed-to-login").click(function () {
+
+    $('#modalLoginForm').modal("toggle");
+    $('#modalRegisterForm').modal("toggle");
+    $('#register-success-msg').addClass('d-none');
 });

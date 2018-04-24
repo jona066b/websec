@@ -1,7 +1,9 @@
 body,html{
     font-family: 'Roboto', sans-serif;;
 }
-
+section h3{
+    border-bottom: 1px solid #AD974F;
+}
 .jumbotron-home-page{
     background-image: url("../images/jumbotron.jpg");
     background-size: cover;
@@ -37,15 +39,26 @@ body,html{
     background-color: #AD974F;
     color: white;
 }
-.btn-gold:hover{
+.btn-gold:hover, .btn-dark:hover{
     opacity: 0.7;
+}
+.btn-dark{
+    background-color: #1e2028;
+    color: #ad974f;
+    font-weight: bold;
+}
+.products-grid .row{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-flow: wrap;
 }
 .single-product {
     border: 5px solid #fff;
     cursor: pointer;
-    height: 182px;
+    height: 250px;
     float: left;
-    margin: 40px;
+    margin: 15px;
     position: relative;
     overflow: hidden;
     width: 200px;
@@ -94,10 +107,65 @@ body,html{
     display: flex;
     justify-content: flex-end;
     flex-direction: column;
+    font-weight: lighter;
+    font-size: 14px;
+}
+.simple-caption p {
+    font-weight: lighter;
+    font-size: 14px;
 }
 
 .futures-icon-one {
-    width: 46px;
-    height: 44px;
-    background: url("../images/spriteShopIcons.png") 0 0;
+    display: inline-block;
+    width: 76px;
+    height: 47px;
+    background: url(../images/spriteShopIcons.png) 118px 0;
+}
+.futures-icon-two {
+    display: inline-block;
+    width: 49px;
+    height: 47px;
+    background: url(../images/spriteShopIcons.png) 49px 0;
+}
+.futures-icon-three {
+    display: inline-block;
+    width: 76px;
+    height: 47px;
+    background: url(../images/spriteShopIcons.png) 0 0;
+}
+.futures .row{
+    padding: 5%;
+}
+.futures{
+    margin-top: 60px;
+}
+footer{
+    background-color: #252324;
+}
+footer .icons-container{
+    color: #AD974F;
+}
+.footer-copyright, .footer-copyright a{
+    color: white;
+}
+.navbar-collapse form button{
+    background-color: transparent;
+    position: absolute;
+    right: 0;
+    padding: 8px 27px;
+}
+.form-control{
+    border-radius: 20px;
+}
+.modal-content{
+    color: #AD974F;
+    background-color: #f5f5f5;
+    overflow-y: scroll;
+    max-height: 80vh;
+}
+.err-msg{
+    text-align: center;
+    color: #d42626;
+    margin-top: 20px;
+    display: block;
 }
