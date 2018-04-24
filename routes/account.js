@@ -9,7 +9,7 @@ var router = express.Router();
 var dbController = require("../database/databasecontroller.js");
 var hasher = require("../helpers/hasher.js");
 var user = require("../models/UserDTO.js");
-var parameterChecker = require("../helpers/parameterChecker.js");
+var parameterChecker = require("../helpers/parameterChecker.js"); 
 /******************************************************/
 
 /************************APIS************************/
