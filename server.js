@@ -18,7 +18,7 @@ app.use(session({
   rolling: true,    
   resave: true,
   saveUninitialized: true,
-  cookie: { secure: false, maxAge: 60000, httpOnly: true }
+  cookie: { secure: true, maxAge: 60000, httpOnly: true }
 }));
 app.use(cookieParser('KjdsijWERR45S'));
 app.use(bodyParser.json());
@@ -45,20 +45,55 @@ const options = {
 
 /***********************Views***********************/
 app.get("/", (req, res) => {
-
     var sTopHtml = fs.readFileSync( __dirname + '/public/components/top.html', 'utf8' );
     var sMainHtml = fs.readFileSync( __dirname + '/views/index.html', 'utf8' );
     var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
 
     //replace placeholders
-
     sTopHtml = sTopHtml.replace('{{title}}','Web shop home page');
     sTopHtml = sTopHtml.replace('{{active-home}}',' active');
     sTopHtml = sTopHtml.replace(/{{active-.*}}/g ,'');
-    sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/login.js"></script>' +
-        '<script src="../public/javascript/logout.js"></script><script src="../public/javascript/register.js"></script>');
+    sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/login.js"></script>' + 
+    '</script><script src="../public/javascript/register.js"></script>');
     res.send( sTopHtml + sMainHtml + sBottomHtml );
+    res.end();
 });
+
+app.get("/profile", (req, res) => {
+    var sTopHtml = fs.readFileSync( __dirname + '/public/components/top.html', 'utf8' );
+    var sMainHtml;
+    var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
+    sTopHtml = sTopHtml.replace('{{title}}','Profile');
+    sTopHtml = sTopHtml.replace('{{active-home}}',' active');
+    sTopHtml = sTopHtml.replace(/{{active-.*}}/g ,'');
+    sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/profile.js"></script>');
+    if(req.session != null && req.session.isLoggedIn == true){
+        var role = req.session.isInRole;
+        switch (role) {
+            case "Basic User":
+                sMainHtml = fs.readFileSync( __dirname + '/views/basicUser.html', 'utf8' );
+                sMainHtml = sMainHtml.replace('{{user}}', req.session.name);
+                return  res.send( sTopHtml + sMainHtml + sBottomHtml );
+            break;
+            case "Admin":
+                    sMainHtml = fs.readFileSync( __dirname + '/views/admin.html', 'utf8' );
+                    sMainHtml = sMainHtml.replace('{{user}}', req.session.name);
+                    return res.send(sTopHtml + sMainHtml + sBottomHtml);
+            break;
+            case "Support":
+                    sMainHtml = fs.readFileSync( __dirname + '/views/support.html', 'utf8' );
+                sMainHtml = sMainHtml.replace('{{user}}', req.session.name);
+                return res.send( sTopHtml + sMainHtml + sBottomHtml );
+            break;         
+        }
+     } else {
+        
+        res.status(403);
+        res.redirect("/");
+        console.log(req.session);
+    }
+});
+
 /****************************************************/
 
 /***********************Routes***********************/
@@ -105,5 +140,4 @@ httpsServer.listen(8443, err => {
     }
     gLog('ok', 'Server is listening to port 8443');
 });
-
 /****************************************************/

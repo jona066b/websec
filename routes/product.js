@@ -28,10 +28,10 @@ router.post("/", function(req,res,next){
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     } 
     else if (req.session != null && req.session.isLoggedIn == true && req.session.isInRole == "Admin"){
-        var optionalParams = []; 
-        optionalParams.push(req.body.name, req.body.quantity, req.body.model, req.body.brand, 
+        var inputParams = []; 
+        inputParams.push(req.body.name, req.body.quantity, req.body.model, req.body.brand, 
             req.body.image, req.body.color, req.body.size, req.body.type, req.body.price, req.body.description); 
-        var checkedParams = parameterChecker.check(req, optionalParams); 
+        var checkedParams = parameterChecker.check(req, inputParams); 
 
         var productNo = null;
         var name = checkedParams[0];
@@ -69,10 +69,10 @@ router.put("/:productNo",function(req,res,next){
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     } 
     else if (req.session != null && req.session.isLoggedIn == true && req.session.isInRole == "Admin"){
-        var optionalParams = []; 
-        optionalParams.push(req.params.productNo,req.body.name, req.body.quantity, req.body.model, req.body.brand, 
+        var inputParams = []; 
+        inputParams.push(req.params.productNo,req.body.name, req.body.quantity, req.body.model, req.body.brand, 
             req.body.image, req.body.color, req.body.size, req.body.type, req.body.price, req.body.description); 
-        var checkedParams = parameterChecker.check(req, optionalParams); 
+        var checkedParams = parameterChecker.check(req, inputParams); 
 
         var productNo = checkedParams[0];
         var name = checkedParams[1];
@@ -113,9 +113,9 @@ router.delete("/:productNo", function(req,res,next){
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     } 
     else if (req.session != null && req.session.isLoggedIn == true && req.session.isInRole == "Admin"){
-        var optionalParams = []; 
-        optionalParams.push(req.params.productNo); 
-        var checkedParams = parameterChecker.check(req, optionalParams); 
+        var inputParams = []; 
+        inputParams.push(req.params.productNo); 
+        var checkedParams = parameterChecker.check(req, inputParams); 
         
         var productNo = checkedParams[0];
         var sQuery = "DELETE FROM product WHERE productNo = ?";
@@ -136,16 +136,15 @@ router.delete("/:productNo", function(req,res,next){
 });
 
 // Search for a specific product by product id
-
 router.get("/:productNo", function(req,res,next){
     if(req.session == null){
         res.status(403);
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     }
     else if (req.session != null && req.session.isLoggedIn == true && req.session.isInRole == "Admin"){
-        var optionalParams = [];
-        optionalParams.push(req.params.productNo);
-        var checkedParams = parameterChecker.check(req, optionalParams);
+        var inputParams = [];
+        inputParams.push(req.params.productNo);
+        var checkedParams = parameterChecker.check(req, inputParams);
 
         var productNo = checkedParams[0];
         var sQuery = "select * from product WHERE productNo = ?";
@@ -165,4 +164,22 @@ router.get("/:productNo", function(req,res,next){
     }
 });
 
+router.get("/:productNo/comments", function(req, res, next){
+    var inputParams = [];
+    inputParams.push(req.params.productNo);
+    var checkedParams = parameterChecker.check(req, inputParams);
+
+    var productNo = checkedParams[0];
+    var sQuery = "SELECT c.comment, c.commentCreateDateTime, u.userName FROM comment" +
+                 " JOIN user AS u ON c.userNo = u.userNo" +
+                 " WHERE c.productNo = ?";
+    dbController.query(sQuery, [productNo], (err, jData) => {
+        if(err){
+            console.log(err);
+            return res.send(err);
+        }
+        console.log(jData);
+        return res.send(jData);
+    });
+});
 module.exports = router;
