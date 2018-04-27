@@ -23,7 +23,10 @@ $(function() {
 function showProducts(data) {
     var htmlShopProducts = "";
     var htmlShopProduct = "";
+    var htmlNumberOfProducts = ""+data.length+" products found";
     $("#lblShopList").html("");
+    $("#product-number").html(htmlNumberOfProducts);
+
     for (var i = 0; i < data.length; i++) {
         htmlShopProduct =   '<div class="col-3 single-product '+data[i].type+'" data-category="'+data[i].type+'">\
                                 <a href="#">\
@@ -37,8 +40,8 @@ function showProducts(data) {
                            </div>';
 
         htmlShopProducts += htmlShopProduct;
-
     }
+
     $("#lblShopList").html(htmlShopProducts);
     initIsotop();
 }

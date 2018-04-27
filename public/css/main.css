@@ -13,7 +13,7 @@ section h3{
     align-items: center;
 }
 .jumbotron-shop-page{
-    background-image: url("../images/Outfitters-Summer-Jeans-T-Shirt-Wear-Collection-2015-for-Men-Women-20.jpg");
+    background-image: url("../images/úvodní.jpg");
     background-size: cover;
     height: 60vh;
     display: flex;
@@ -182,4 +182,17 @@ footer .icons-container{
 }
 .profile{
     margin-top: 50px;
+}
+.filter-sort{
+    background: #ededed;
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+}
+.filter-sort .button{
+    width: 20%;
+    color: #1e2028;
+}
+#filters, #sorts{
+    display: flex;
+    justify-content: space-between;
 }
