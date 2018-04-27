@@ -58,7 +58,8 @@ app.get("/", (req, res) => {
     sTopHtml = sTopHtml.replace(/{{active-.*}}/g ,'');
     sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/login.js"></script>' + 
     '</script><script src="../public/javascript/register.js"></script>' +
-        '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>');
+        '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>' +
+        '<script src="../public/javascript/homePage.js"></script>');
     res.send( sTopHtml + sMainHtml + sBottomHtml );
     res.end();
 });
