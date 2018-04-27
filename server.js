@@ -8,9 +8,10 @@ var expressSanitizer = require("express-sanitizer");
 var fs = require("fs");
 var https = require("https");
 
+
 var app = express();
 if (app.get('env') === 'production') {
-    app.set('trust proxy', 1) // trust first proxy
+    app.set('trust proxy', 1); // trust first proxy
     sess.cookie.secure = true // serve secure cookies
   }
 app.use(session({
@@ -73,7 +74,8 @@ app.get("/shop", (req, res) => {
     sTopHtml = sTopHtml.replace('{{title}}','Shop');
     sTopHtml = sTopHtml.replace('{{active-shop}}',' active');
     sTopHtml = sTopHtml.replace(/{{active-.*}}/g ,'');
-    sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/shop.js"></script>');
+    sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/shop.js"></script>' +
+        '<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>');
     res.send( sTopHtml + sMainHtml + sBottomHtml );
 });
 

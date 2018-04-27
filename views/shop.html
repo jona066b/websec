@@ -7,9 +7,24 @@
 </div>
 
 <section class="products-grid">
-    <h3>Hot offers</h3>
-    <div class="row" id="lblShopList">
+    <h3>Products</h3>
+    <section class="filter-sort">
+        <h5>Filter</h5>
+        <div id="filters" class="button-group"> <button class="button is-checked" data-filter="*">show all</button>
+            <button class="button" data-filter=".women">women</button>
+            <button class="button" data-filter=".men">men</button>
+            <button class="button" data-filter=".accessories">accessories</button>
+            <button class="button" data-filter=".shoes">shoes</button>
+        </div>
 
+        <h5>Sort</h5>
+        <div id="sorts" class="button-group">
+            <button class="button is-checked" data-sort-by="original-order">reset</button>
+            <button class="button" data-sort-by="name">name</button>
+            <button class="button" data-sort-by="price">price</button>
+        </div>
+    </section>
+    <div class="row" id="lblShopList">
     </div>
 </section>
 <section class="futures">
