@@ -174,7 +174,7 @@ router.get("/", function(req,res,next){
     }
     if(req.session != null && req.session.isLoggedIn == true){
 
-        var userNo = jSession.userName;
+        var userNo = req.session.userName;
         var sQuery = "SELECT userNo, name, address, phone, email, userName, image from user WHERE userName = ?";
 
         dbController.query(sQuery, [userNo], (err, sjData) => {

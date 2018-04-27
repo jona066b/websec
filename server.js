@@ -85,7 +85,7 @@ app.get("/profile", (req, res) => {
     var sMainHtml;
     var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
     sTopHtml = sTopHtml.replace('{{title}}','Profile');
-    sTopHtml = sTopHtml.replace('{{active-home}}',' active');
+    sTopHtml = sTopHtml.replace('{{active-profile}}',' active');
     sTopHtml = sTopHtml.replace(/{{active-.*}}/g ,'');
     sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/profile.js"></script>');
     if(req.session != null && req.session.isLoggedIn == true){
@@ -102,7 +102,7 @@ app.get("/profile", (req, res) => {
                     return res.send(sTopHtml + sMainHtml + sBottomHtml);
             break;
             case "Support":
-                    sMainHtml = fs.readFileSync( __dirname + '/views/support.html', 'utf8' );
+                sMainHtml = fs.readFileSync( __dirname + '/views/support.html', 'utf8' );
                 sMainHtml = sMainHtml.replace('{{user}}', req.session.name);
                 return res.send( sTopHtml + sMainHtml + sBottomHtml );
             break;         
