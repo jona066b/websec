@@ -59,6 +59,21 @@ app.get("/", (req, res) => {
         '<script src="../public/javascript/logout.js"></script><script src="../public/javascript/register.js"></script>');
     res.send( sTopHtml + sMainHtml + sBottomHtml );
 });
+
+app.get("/shop", (req, res) => {
+
+    var sTopHtml = fs.readFileSync( __dirname + '/public/components/top.html', 'utf8' );
+    var sMainHtml = fs.readFileSync( __dirname + '/views/shop.html', 'utf8' );
+    var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
+
+    //replace placeholders
+
+    sTopHtml = sTopHtml.replace('{{title}}','Shop');
+    sTopHtml = sTopHtml.replace('{{active-shop}}',' active');
+    sTopHtml = sTopHtml.replace(/{{active-.*}}/g ,'');
+    sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/shop.js"></script>');
+    res.send( sTopHtml + sMainHtml + sBottomHtml );
+});
 /****************************************************/
 
 /***********************Routes***********************/
