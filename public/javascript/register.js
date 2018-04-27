@@ -49,39 +49,31 @@ $(function() {
     });
 });
 
-$("#btnRegister").click(function () {
-    var form = $("#frmRegister");
-    if(form.valid()){
-
-        var oFrmUser = form.serialize();
-        console.log(oFrmUser);
-
-        $.post( '/user' , oFrmUser , function( data ){
-        }).done(function() {
-            // TO DO ON DONE
-            console.log("Success");
-            $('#register-err-msg').text('');
-            $('#register-success-msg').removeClass('d-none');
-
-        }).fail(function(data, textStatus, xhr) {
-            //This shows status code eg. 403
-            console.log("error", data.status);
-            //This shows status message eg. Forbidden
-            console.log("STATUS: "+xhr);
-
-            var response = JSON.parse(data.responseText);
-            $('#login-err-msg').text(response.response);
-
-        }).always(function() {
-            //TO-DO after fail/done request.
-            console.log("ended");
-        });
-    }
-});
-
 $("#proceed-to-login").click(function () {
 
     $('#modalLoginForm').modal("toggle");
     $('#modalRegisterForm').modal("toggle");
     $('#register-success-msg').addClass('d-none');
 });
+
+$(document).ready(function() {
+    var options = {
+        beforeSubmit: showRequest, // pre-submit callback
+        success: showResponse // post-submit callback
+    };
+    var form = $("#frmRegister");
+    if(form.valid()){
+        // bind to the form's submit event
+        form.submit(function () {
+            $(this).ajaxSubmit(options);
+            // always return false to prevent standard browser submit and page navigation
+            return false; });
+    }
+});
+// pre-submit callback
+function showRequest(formData, jqForm, options) {
+    return true; }
+// post-submit callback
+function showResponse(responseText, statusText, xhr, $form) {
+    $('#register-success-msg').removeClass('d-none');
+}

@@ -9,43 +9,61 @@ var router = express.Router();
 var dbController = require("../database/databasecontroller.js");
 var hasher = require("../helpers/hasher.js");
 var user = require("../models/UserDTO.js");
-var parameterChecker = require("../helpers/parameterChecker.js"); 
+var parameterChecker = require("../helpers/parameterChecker.js");
+var imageHandler = require("../helpers/imageHandler.js");
 /******************************************************/
 
 /************************APIS************************/
-router.post("/", function(req, res, next){
-    var inputParams = [];
-    inputParams.push(req.body.name, req.body.address, req.body.phone,
-        req.body.email,  req.body.userName, req.body.password, req.body.image);
-    var checkedParams = parameterChecker.check(req, inputParams);
+router.post("/" , function(req, res, next){
 
-    var userNo = null;
-    var name = checkedParams[0];
-    var address = checkedParams[1];
-    var phone = checkedParams[2];
-    var email = checkedParams[3];
-    var userName = checkedParams[4];
-    var password = checkedParams[5];
-    var image = checkedParams[6];
-    var roleName = 'Basic User';
-    var hashResult = JSON.parse(hasher.hashPw(password));
-    var pwSalt = hashResult.salt;
-    var pwHashSalt = hashResult.data.pwHash;
-    var sp = "call AddUpdateUser(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    dbController.query(sp, [userNo, name, address, phone, email, userName,
-        pwHashSalt, pwSalt, image, roleName], (err, sjData) => {
-        if(err){
-            console.log(err);
-            res.send(err);
+    var image;
+    var imageName;
+    imageHandler.upload(req, res, function (err) {
+        if (err) {
+            // An error occurred when uploading
+            console.log("error occured: ");
+            return
         }
-        var jData = JSON.parse(sjData);
-        if(jData[1].length > 0){
-            return res.send(sjData);
-        } else {
-            res.status(409);
-            return res.send(JSON.stringify({response: 'Already Exists'}));
+        if(req.file){
+            // Everything went fine
+            console.log("image uploaded");
+            console.log("req", req);
+            image = req.file;
+            imageName = image.filename;
         }
+        var inputParams = [];
+        inputParams.push(req.body.name, req.body.address, req.body.phone,
+            req.body.email,  req.body.userName, req.body.password);
+        var checkedParams = parameterChecker.check(req, inputParams);
+
+        var userNo = null;
+        var name = checkedParams[0];
+        var address = checkedParams[1];
+        var phone = checkedParams[2];
+        var email = checkedParams[3];
+        var userName = checkedParams[4];
+        var password = checkedParams[5];
+        var roleName = 'Basic User';
+        var hashResult = JSON.parse(hasher.hashPw(password));
+        var pwSalt = hashResult.salt;
+        var pwHashSalt = hashResult.data.pwHash;
+        var sp = "call AddUpdateUser(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        dbController.query(sp, [userNo, name, address, phone, email, userName,
+            pwHashSalt, pwSalt, imageName, roleName], (err, sjData) => {
+            if(err){
+                console.log(err);
+                res.send(err);
+            }
+            var jData = JSON.parse(sjData);
+            if(jData[1].length > 0){
+                return res.send(sjData);
+            } else {
+                res.status(409);
+                return res.send(JSON.stringify({response: 'Already Exists'}));
+            }
+        });
     });
+
 });
 
 router.post("/login", function(req, res, next){
@@ -97,7 +115,7 @@ router.get("/logout", function(req, res, next){
     req.session.destroy();
     console.log(req.session);
     return res.send(JSON.stringify({response: "Successfully logged out!"}));
-    
+
 });
 
 router.put("/:userNo", function(req,res,next){
@@ -191,7 +209,7 @@ router.post("/user/comment", function(req, res, next){
             if(err){
                 console.log(err);
                 return res.send(err);
-            } 
+            }
             console.log(jData);
             return res.send(jData);
         });
@@ -215,7 +233,7 @@ router.put("/user/comment/:commentNo", function(req, res, next){
             if(err){
                 console.log(err);
                 return res.send(err);
-            } 
+            }
             console.log(jData);
             return res.send(jData);
         });

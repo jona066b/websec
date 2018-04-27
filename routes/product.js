@@ -6,6 +6,8 @@ var router = express.Router();
 /************************Modules************************/
 var dbController = require("../database/databasecontroller.js");
 var account = require(__dirname + "/account.js");
+var imageHandler = require("../helpers/imageHandler.js");
+
 /******************************************************/
 
 /************************APIS*************************/
