@@ -29,7 +29,6 @@ router.get("/", function(req, res, next){
         res.status(401);
         res.send(JSON.stringify({response: "Unauthorized access!"}));
     }
-    
 });
 
 router.put("/:userNo",function(req, res, next){
@@ -38,9 +37,9 @@ router.put("/:userNo",function(req, res, next){
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     }
     else if(req.session != null && req.session.isLoggedIn == true && req.session.isInRole == "Admin"){
-        var optionalParams = []; 
-        optionalParams.push(req.params.userNo, req.body.roleName); 
-        var checkedParams = parameterChecker.check(req, optionalParams); 
+        var inputParams = []; 
+        inputParams.push(req.inputParamsaramsarams.userNo, req.body.roleName); 
+        var checkedParams = parameterChecker.check(req, inputParams); 
 
         var userNo = checkedParams[0];
         var roleName = checkedParams[1];

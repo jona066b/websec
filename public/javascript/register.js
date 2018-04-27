@@ -50,7 +50,6 @@ $(function() {
 });
 
 $("#btnRegister").click(function () {
-
     var form = $("#frmRegister");
     if(form.valid()){
 

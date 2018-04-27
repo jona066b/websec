@@ -18,9 +18,9 @@ router.get("/:orderNo", function(req,res,next){
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     }
     else if (jSession != null && jSession.isLoggedIn == true && jSession.isInRole == "Support"){
-        var optionalParams = []; 
-        optionalParams.push(req.params.orderNo); 
-        var checkedParams = parameterChecker.check(req, optionalParams); 
+        var inputParams = []; 
+        inputParams.push(req.params.orderNo); 
+        var checkedParams = parameterChecker.check(req, inputParams); 
 
         var orderNo = checkedParams[0];
         var sQuery = "SELECT * from order WHERE orderNo = ?";
@@ -48,9 +48,9 @@ router.get("/:userNo", function(req,res,next){
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     }
     else if (jSession != null && jSession.isLoggedIn == true && jSession.isInRole == "Support"){
-        var optionalParams = []; 
-        optionalParams.push(req.params.userNo); 
-        var checkedParams = parameterChecker.check(req, optionalParams); 
+        var inputParams = []; 
+        inputParams.push(req.params.userNo); 
+        var checkedParams = parameterChecker.check(req, inputParams); 
 
         var userNo = checkedParams[0];
         var sQuery = "SELECT * FROM order AS o JOIN user AS u ON o.userNo = u.userNo";

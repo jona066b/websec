@@ -31,33 +31,20 @@ $(function() {
 });
 
 $("#btnLogin").click(function () {
-
     var form = $("#frmLogin");
     if(form.valid()){
-
-        var oFrmUser = form.serialize();
-        console.log(oFrmUser);
-
+        var oFrmUser = form.serialize();;
         $.post( '/user/login' , oFrmUser , function( data ){
         }).done(function() {
             // TO DO ON DONE
-            console.log("Success");
-            $('#login-err-msg').text('');
-            $('#modalLoginForm').modal("toggle");
-            $('#profile-link').removeClass('d-none');
-            $( "#btn-logIn").addClass('d-none');
-            $( "#btn-logOut").removeClass('d-none');
-            $( "#btn-register").addClass('d-none');
-
+            window.location.replace("/profile");                   
         }).fail(function(data, textStatus, xhr) {
             //This shows status code eg. 403
             console.log("error", data.status);
             //This shows status message eg. Forbidden
             console.log("STATUS: "+xhr);
-
             var response = JSON.parse(data.responseText);
             $('#login-err-msg').text(response.response);
-
         }).always(function() {
             //TO-DO after fail/done request.
             console.log("ended");

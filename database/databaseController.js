@@ -1,7 +1,7 @@
-var _DbController = {};
-var _dbConnection = require(__dirname + "/databaseconnection.js");
+const dbController = {};
+const dbConnection = require(__dirname + "/databaseconnection.js");
 
-_DbController.query = (sQuery, params, fCallback) => {
+dbController.query = (sQuery, params, fCallback) => {
     var jResult = {};
     global.gPool.getConnection(function(err, connection){
         if(err){
@@ -35,4 +35,4 @@ _DbController.query = (sQuery, params, fCallback) => {
         }      
     });
 }
-module.exports = _DbController;
+module.exports = dbController;
