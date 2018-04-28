@@ -76,7 +76,8 @@ app.get("/shop", (req, res) => {
     sTopHtml = sTopHtml.replace('{{active-shop}}',' active');
     sTopHtml = sTopHtml.replace(/{{active-.*}}/g ,'');
     sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/shop.js"></script>' +
-        '<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>');
+        '<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>' +
+        '<script src="../public/javascript/login.js"></script><script src="../public/javascript/register.js"></script>');
     res.send( sTopHtml + sMainHtml + sBottomHtml );
 });
 
@@ -108,7 +109,6 @@ app.get("/profile", (req, res) => {
             break;         
         }
      } else {
-        
         res.status(403);
         res.redirect("/");
         console.log(req.session);
