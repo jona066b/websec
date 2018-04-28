@@ -29,12 +29,12 @@ function showProducts(data) {
 
     for (var i = 0; i < data.length; i++) {
         htmlShopProduct =   '<div class="col-3 single-product '+data[i].type+'" data-category="'+data[i].type+'">\
-                                <a href="#">\
+                                <a href="">\
                                     <img src="../public/images/products/placeholder-image-1000x1000.png" class="img-fluid img-thumbnail" alt="product">\
                                     <span class="caption simple-caption">\
                                        <span class="name">'+data[i].name+'</span>\
                                        <span class="price">'+data[i].prize+' DKK</span>\
-                                       <button class="btnBuyProduct btn btn-gold my-2 my-sm-0 text-uppercase" data-id="'+data[i].productNo+'">Buy</button>\
+                                       <button class="btnBuyProduct btn btn-gold my-2 my-sm-0 text-uppercase" type="button" data-id="'+data[i].productNo+'">Buy</button>\
                                     </span>\
                                 </a>\
                            </div>';
@@ -44,6 +44,7 @@ function showProducts(data) {
 
     $("#lblShopList").html(htmlShopProducts);
     initIsotop();
+    initButtons();
 }
 
 function initIsotop() {
@@ -100,3 +101,10 @@ $('.button-group').each( function( i, buttonGroup ) {
         $( this ).addClass('is-checked');
     });
 });
+function initButtons(){
+    $(".btnBuyProduct").click(function () {
+        event.preventDefault();
+        var ProductId = $(this).attr('data-id');
+        console.log("ProductId: ",ProductId );
+    });
+}
