@@ -5,6 +5,7 @@ var router = express.Router();
 
 /************************Modules************************/
 var dbController = require("../database/databasecontroller.js");
+var parameterChecker = require("../helpers/parameterChecker.js"); 
 var account = require(__dirname + "/account.js");
 /******************************************************/
 

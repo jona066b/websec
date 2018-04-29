@@ -8,7 +8,6 @@ var router = express.Router();
 /************************Modules************************/
 var dbController = require("../database/databasecontroller.js");
 var hasher = require("../helpers/hasher.js");
-var user = require("../models/UserDTO.js");
 var parameterChecker = require("../helpers/parameterChecker.js");
 var imageHandler = require("../helpers/imageHandler.js");
 /******************************************************/
@@ -75,7 +74,7 @@ router.post("/login", function(req, res, next){
     var password = checkedParams[1];
     console.log(password);
     console.log(userName);
-    var sQuery = "SELECT userNo, name, roleName, password, passwordSalt, userName FROM user AS u " +
+    var sQuery = "SELECT userNo, name, roleName, password, passwordSalt, userName, image FROM user AS u " +
         "JOIN role AS r ON u.roleNo = r.roleNo WHERE userName = ?";
     dbController.query(sQuery, [userName], (err, sjData) => {
         if(err){
@@ -103,8 +102,9 @@ router.post("/login", function(req, res, next){
                 req.session.userName = jData[0].userName;
                 req.session.userNo = jData[0].userNo;
                 req.session.name = jData[0].name;
+                req.session.image = jData[0].image;
                 console.log(req.session);
-                return res.send(JSON.stringify({response: "Logged in successfully!"}));
+                return res.send(JSON.stringify(req.session));
             }
         }
 
@@ -192,7 +192,7 @@ router.get("/", function(req,res,next){
     }
 });
 
-router.post("/user/comment", function(req, res, next){
+router.post("/comment", function(req, res, next){
     if(req.session == null){
         res.status(403);
         res.send(JSON.stringify({response: "You need to be logged in!"}));
@@ -208,15 +208,15 @@ router.post("/user/comment", function(req, res, next){
         dbController.query(sp, [commentNo, checkedParams[0], userNo, checkedParams[1]], (err, jData) => {
             if(err){
                 console.log(err);
-                return res.send(err);
-            }
+                 res.send(err);
+            } 
             console.log(jData);
-            return res.send(jData);
+                 res.send(jData);
         });
     }
 });
 
-router.put("/user/comment/:commentNo", function(req, res, next){
+router.put("/comment/:commentNo", function(req, res, next){
     if(req.session == null){
         res.status(403);
         res.send(JSON.stringify({response: "You need to be logged in!"}));
@@ -233,11 +233,10 @@ router.put("/user/comment/:commentNo", function(req, res, next){
             if(err){
                 console.log(err);
                 return res.send(err);
-            }
+            } 
             console.log(jData);
             return res.send(jData);
         });
     }
 });
-
 module.exports = router;

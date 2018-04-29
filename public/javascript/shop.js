@@ -20,6 +20,16 @@ $(function() {
 
 });
 
+function checkSession() {
+    var cookie = localStorage.getItem("cookie");
+    if(cookie !== null){
+        $('#profile-link').removeClass('d-none');
+        $( "#btn-logIn").addClass('d-none');
+        $( "#btn-logOut").removeClass('d-none');
+        $( "#btn-register").addClass('d-none');
+    } 
+}
+
 function showProducts(data) {
     var htmlShopProducts = "";
     var htmlShopProduct = "";
@@ -35,6 +45,7 @@ function showProducts(data) {
                                        <span class="name">'+data[i].name+'</span>\
                                        <span class="price">'+data[i].prize+' DKK</span>\
                                        <button class="btnBuyProduct btn btn-gold my-2 my-sm-0 text-uppercase" type="button" data-id="'+data[i].productNo+'">Buy</button>\
+                                       <button class="btnViewProduct btn btn-gold my-2 my-sm-0 text-uppercase" data-id="'+ data[i].productNo +'">View</button>\
                                     </span>\
                                 </a>\
                            </div>';
@@ -43,10 +54,11 @@ function showProducts(data) {
     }
 
     $("#lblShopList").html(htmlShopProducts);
-    initIsotop();
-    initButtons();
+    //initIsotop();
+    singleProduct();
 }
 
+/*
 function initIsotop() {
     $('#lblShopList').isotope({
         // options...
@@ -63,7 +75,7 @@ function initIsotop() {
         }
     });
 }
-
+*/
 // filter functions
 var filterFns = {
     // show if number is greater than 50
@@ -101,10 +113,14 @@ $('.button-group').each( function( i, buttonGroup ) {
         $( this ).addClass('is-checked');
     });
 });
-function initButtons(){
-    $(".btnBuyProduct").click(function () {
+
+
+function singleProduct(){
+    $(".btnViewProduct").click(function () {
         event.preventDefault();
-        var ProductId = $(this).attr('data-id');
-        console.log("ProductId: ",ProductId );
+        var productNo = $(this).attr('data-id');
+        console.log("ProductId: ",productNo );
+        window.location.replace("/selected-product/" + productNo);  
     });
 }
+checkSession();

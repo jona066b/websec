@@ -52,6 +52,14 @@ app.get("/", (req, res) => {
     var sMainHtml = fs.readFileSync( __dirname + '/views/index.html', 'utf8' );
     var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
 
+    
+    if(req.session != null && req.session.isLoggedIn == true){
+        sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/shop.js"></script>' + 
+        '<script src="../public/javascript/logout.js"></script>' + '<script src="../public/javascript/profile.js"></script>' +
+        '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>' +
+        '<script src="../public/javascript/homePage.js"></script>');
+    }
+
     //replace placeholders
     sTopHtml = sTopHtml.replace('{{title}}','Web shop home page');
     sTopHtml = sTopHtml.replace('{{active-home}}',' active');
@@ -70,6 +78,14 @@ app.get("/shop", (req, res) => {
     var sMainHtml = fs.readFileSync( __dirname + '/views/shop.html', 'utf8' );
     var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
 
+    
+    if(req.session != null && req.session.isLoggedIn == true){
+        sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/shop.js"></script>' + 
+        '<script src="../public/javascript/logout.js"></script>' + '<script src="../public/javascript/profile.js"></script>'
+        + '<script src="../public/javascript/singleProduct.js"></script>' + 
+        '<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>');
+    }
+
     //replace placeholders
 
     sTopHtml = sTopHtml.replace('{{title}}','Shop');
@@ -77,7 +93,8 @@ app.get("/shop", (req, res) => {
     sTopHtml = sTopHtml.replace(/{{active-.*}}/g ,'');
     sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/shop.js"></script>' +
         '<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>' +
-        '<script src="../public/javascript/login.js"></script><script src="../public/javascript/register.js"></script>');
+        '<script src="../public/javascript/login.js"></script><script src="../public/javascript/register.js"></script>'
+        + '<script src="../public/javascript/singleProduct.js"></script>');
     res.send( sTopHtml + sMainHtml + sBottomHtml );
 });
 
@@ -86,9 +103,10 @@ app.get("/profile", (req, res) => {
     var sMainHtml;
     var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
     sTopHtml = sTopHtml.replace('{{title}}','Profile');
-    sTopHtml = sTopHtml.replace('{{active-profile}}',' active');
+    sTopHtml = sTopHtml.replace('{{active-home}}',' active');
     sTopHtml = sTopHtml.replace(/{{active-.*}}/g ,'');
-    sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/profile.js"></script>');
+    sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/profile.js"></script>'+ 
+    '<script src="../public/javascript/logout.js"></script>');
     if(req.session != null && req.session.isLoggedIn == true){
         var role = req.session.isInRole;
         switch (role) {
@@ -103,18 +121,42 @@ app.get("/profile", (req, res) => {
                     return res.send(sTopHtml + sMainHtml + sBottomHtml);
             break;
             case "Support":
-                sMainHtml = fs.readFileSync( __dirname + '/views/support.html', 'utf8' );
+                    sMainHtml = fs.readFileSync( __dirname + '/views/support.html', 'utf8' );
                 sMainHtml = sMainHtml.replace('{{user}}', req.session.name);
                 return res.send( sTopHtml + sMainHtml + sBottomHtml );
             break;         
         }
      } else {
+        
         res.status(403);
         res.redirect("/");
         console.log(req.session);
     }
 });
 
+app.get("/selected-product/:UID", (req, res) => {
+    var selectedProductID = req.sanitize(req.params.UID);
+    sTopHtml = fs.readFileSync( __dirname + '/public/components/top.html', 'utf8' );
+    sMainHtml = fs.readFileSync( __dirname + '/views/singleProduct.html', 'utf8' );
+    sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
+
+    if(req.session != null && req.session.isLoggedIn == true){
+        sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/shop.js"></script>' + 
+        '<script src="../public/javascript/logout.js"></script>' + '<script src="../public/javascript/profile.js"></script>' +
+        '<script src="../public/javascript/singleProduct.js"></script>');
+    }
+    //replace placeholders
+
+    sTopHtml = sTopHtml.replace('{{title}}','Shop');
+    sTopHtml = sTopHtml.replace('{{active-shop}}',' active');
+    sTopHtml = sTopHtml.replace(/{{active-.*}}/g ,'');
+    sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/shop.js"></script>' + 
+    '<script src="../public/javascript/login.js"></script>' + 
+    '</script><script src="../public/javascript/register.js"></script>' + '<script src="../public/javascript/singleProduct.js"></script>');
+    res.send( sTopHtml + sMainHtml + sBottomHtml );
+    res.end();
+
+});
 /****************************************************/
 
 /***********************Routes***********************/

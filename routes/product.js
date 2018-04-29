@@ -7,7 +7,7 @@ var router = express.Router();
 var dbController = require("../database/databasecontroller.js");
 var account = require(__dirname + "/account.js");
 var imageHandler = require("../helpers/imageHandler.js");
-
+var parameterChecker = require("../helpers/parameterChecker.js"); 
 /******************************************************/
 
 /************************APIS*************************/
@@ -139,31 +139,21 @@ router.delete("/:productNo", function(req,res,next){
 
 // Search for a specific product by product id
 router.get("/:productNo", function(req,res,next){
-    if(req.session == null){
-        res.status(403);
-        res.send(JSON.stringify({response: "You need to be logged in!"}));
-    }
-    else if (req.session != null && req.session.isLoggedIn == true && req.session.isInRole == "Admin"){
-        var inputParams = [];
-        inputParams.push(req.params.productNo);
-        var checkedParams = parameterChecker.check(req, inputParams);
+    var inputParams = [];
+    inputParams.push(req.params.productNo);
+    var checkedParams = parameterChecker.check(req, inputParams);
 
-        var productNo = checkedParams[0];
-        var sQuery = "select * from product WHERE productNo = ?";
+    var productNo = checkedParams[0];
+    var sQuery = "select * from product WHERE productNo = ?";
 
-        dbController.query(sQuery, [productNo], (err, sjData) => {
-            if(err){
-                console.log(err);
-                return res.send(JSON.stringify(err));
-            }
-            console.log(sjData);
-            return res.send(sjData);
-        });
-    }
-    else {
-        res.status(401);
-        res.send(JSON.stringify({response: "Unauthorized access!"}));
-    }
+    dbController.query(sQuery, [productNo], (err, sjData) => {
+        if(err){
+            console.log(err);
+            return res.send(JSON.stringify(err));
+        }
+        console.log(sjData);
+        return res.send(sjData);
+    });
 });
 
 router.get("/:productNo/comments", function(req, res, next){
@@ -172,7 +162,8 @@ router.get("/:productNo/comments", function(req, res, next){
     var checkedParams = parameterChecker.check(req, inputParams);
 
     var productNo = checkedParams[0];
-    var sQuery = "SELECT c.comment, c.commentCreateDateTime, u.userName FROM comment" +
+    var sQuery = "SELECT c.comment, c.commentCreateDateTime, c.commentUpdateDateTime, u.email, u.image FROM product AS p" +
+                 " JOIN comment AS c ON p.productNo = c.productNo" +
                  " JOIN user AS u ON c.userNo = u.userNo" +
                  " WHERE c.productNo = ?";
     dbController.query(sQuery, [productNo], (err, jData) => {
@@ -184,4 +175,6 @@ router.get("/:productNo/comments", function(req, res, next){
         return res.send(jData);
     });
 });
+
+
 module.exports = router;
