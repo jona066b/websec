@@ -38,6 +38,7 @@ $("#btnLogin").click(function () {
         }).done(function() {
             // TO DO ON DONE
             toggleBtnsVisibility();
+            localStorage.setItem("cookie", data);
             window.location.replace("/profile");                   
         }).fail(function(data, textStatus, xhr) {
             //This shows status code eg. 403
