@@ -6,7 +6,7 @@ var router = express.Router();
 /*******************************************************/
 
 /************************Modules************************/
-var dbController = require("../database/databasecontroller.js");
+var dbController = require(__dirname+ "/database/databaseController.js");
 var hasher = require("../helpers/hasher.js");
 var parameterChecker = require("../helpers/parameterChecker.js");
 var imageHandler = require("../helpers/imageHandler.js");

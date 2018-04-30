@@ -4,7 +4,7 @@ var router = express.Router();
 /*******************************************************/
 
 /************************Modules************************/
-var dbController = require("../database/databasecontroller.js");
+var dbController = require(__dirname+ "/database/databaseController.js");
 /******************************************************/
 
 router.get("/", function(req, res, next){
