@@ -35,7 +35,7 @@ $("#btnLogin").click(function () {
     if(form.valid()){
         var oFrmUser = form.serialize();
         $.post( '/user/login' , oFrmUser , function( data ){
-        }).done(function() {
+        }).done(function(data) {
             // TO DO ON DONE
             toggleBtnsVisibility();
             localStorage.setItem("cookie", data);
