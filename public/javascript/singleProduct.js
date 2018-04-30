@@ -5,22 +5,22 @@ var productId = url.substring(url.lastIndexOf('/') + 1);
 $(function() {
     //get product
     $.get( '/product/' + productId , function( data ){
-        
+
     }).done(function( data ) {
         // TO DO ON DONE
-        
-        console.log("Success");
+
+        //console.log("Success");
         showProduct(data);
     }).fail(function(data, textStatus, xhr) {
         //This shows status code eg. 403
-        console.log("error", data.status);
+        //console.log("error", data.status);
         //This shows status message eg. Forbidden
-        console.log("STATUS: "+xhr);
+        //console.log("STATUS: "+xhr);
 
     }).always(function() {
         //TO-DO after fail/done request.
-        
-        console.log("ended");
+
+        //console.log("ended");
     });
 
     //get product comments
@@ -28,31 +28,32 @@ $(function() {
 
     }).done(function( data ) {
         // TO DO ON DONE
-        console.log("Success");
+        //console.log("Success");
         showComments(data);
-      
+
     }).fail(function(data, textStatus, xhr) {
         //This shows status code eg. 403
-        console.log("error", data.status);
+        //console.log("error", data.status);
         //This shows status message eg. Forbidden
-        console.log("STATUS: "+xhr);
+        //console.log("STATUS: "+xhr);
 
     }).always(function() {
         //TO-DO after fail/done request.
-        
-        console.log("ended");
+
+        //console.log("ended");
     });
 });
 
 function checkSession() {
     var cookie = localStorage.getItem("cookie");
+    //console.log("cookie: ", cookie);
     if(cookie !== null){
         $('#profile-link').removeClass('d-none');
         $( "#btn-logIn").addClass('d-none');
         $( "#btn-logOut").removeClass('d-none');
         $( "#btn-register").addClass('d-none');
         return true;
-    } 
+    }
     return false;
 }
 
@@ -87,16 +88,16 @@ function showComments(data){
                                     </form>\
                                 </div>\
                             </div>';
-        } 
+    }
     for (let i = 0; i < jData.length; i++) {
         var createTime = new Date(jData[i].commentCreateDateTime);
         var locale = "en-us";
         var minutes = createTime.getMinutes();
         if (minutes < 10) {
             minutes = "0" + minutes;
-         }
-        var formatDate = createTime.toLocaleString(locale, {month: "long"}) + " " + createTime.getDate() + ", " 
-        + createTime.getFullYear() + " @ " + createTime.getHours() + ":" + minutes;
+        }
+        var formatDate = createTime.toLocaleString(locale, {month: "long"}) + " " + createTime.getDate() + ", "
+            + createTime.getFullYear() + " @ " + createTime.getHours() + ":" + minutes;
         htmlComment =   '<div class="comment-wrap">\
                             <div class="photo">\
                                 <div class="avatar" style="background-image: url(https://crimsonems.org/wp-content/uploads/2017/10/profile-placeholder.gif")"></div>\
@@ -111,13 +112,13 @@ function showComments(data){
                             </div>\
                         </div>\
                     </div>';
-        htmlComments += htmlComment;      
+        htmlComments += htmlComment;
     }
     $("#comments").html(htmlComments);
     $("#comments").prepend(loggedUserComment);
     addComment();
 
-}	
+}
 
 function addComment() {
     $("#btnSubmit").click(function() {
@@ -126,22 +127,22 @@ function addComment() {
 
         var txtComment = $("textarea#txtComment").val();
         var sjComment = {"comment":txtComment,"userNo": jCookie.userNo, "productNo": productId};
-        console.log(sjComment);
+        //console.log(sjComment);
 
         $.post( '/user/comment' , sjComment , function( data ){
         }).done(function(data) {
             // TO DO ON DONE
-            console.log("Success");
+            // console.log("Success");
             var jComment = JSON.parse(data);
             var createTime = new Date(jComment[0][0].commentCreateDateTime);
             var locale = "en-us";
             var minutes = createTime.getMinutes();
             if (minutes < 10) {
                 minutes = "0" + minutes;
-                }
-            var formatDate = createTime.toLocaleString(locale, {month: "long"}) + " " + createTime.getDate() + ", " 
-            + createTime.getFullYear() + " @ " + createTime.getHours() + ":" + minutes;
-            console.log(formatDate);
+            }
+            var formatDate = createTime.toLocaleString(locale, {month: "long"}) + " " + createTime.getDate() + ", "
+                + createTime.getFullYear() + " @ " + createTime.getHours() + ":" + minutes;
+            //console.log(formatDate);
             var htmlComment =   '<div class="comment-wrap">\
                             <div class="photo">\
                                 <div class="avatar" style="background-image: url(https://crimsonems.org/wp-content/uploads/2017/10/profile-placeholder.gif")"></div>\
@@ -156,29 +157,29 @@ function addComment() {
                             </div>\
                         </div>\
                     </div>';
-        $("#comments").append(htmlComment);
+            $("#comments").append(htmlComment);
         }).fail(function(data, textStatus, xhr) {
             //This shows status code eg. 403
-            console.log("error", data.status);
+            //console.log("error", data.status);
             //This shows status message eg. Forbidden
-            console.log("STATUS: "+xhr);
+            //console.log("STATUS: "+xhr);
 
             var response = JSON.parse(data.responseText);
-            $('#login-err-msg').text(response.response);
+            //console.log("response: ", response);
 
         }).always(function() {
             //TO-DO after fail/done request.
-            console.log("ended");
+            //console.log("ended");
         });
     });
 }
 
 function showProduct(data) {
     var jData = JSON.parse(data);
-    console.log(jData);
+    //console.log(jData);
     var htmlShopProduct = "";
     $("#product-container").html("");
-        htmlShopProduct =   '<div class="card" style="width: 30rem; height: 50rem;">\
+    htmlShopProduct =   '<div class="card" style="width: 30rem; height: 50rem;">\
                                 <img class="card-img-top" src="http://via.placeholder.com/450x350" alt="Card image cap">\
                                      <div class="card-body">\
                                          <h5 class="card-title">' + jData[0].name +'</h5>\

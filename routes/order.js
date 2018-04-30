@@ -28,10 +28,10 @@ router.get("/:orderNo", function(req,res,next){
 
         dbController.query(sQuery, [orderNo], (err, sjData) => {
             if(err){
-                console.log(err);
+                //console.log(err);
                 return res.send(JSON.stringify(err));
             }
-            console.log(sjData);
+            //console.log(sjData);
             return res.send(sjData);
         });
     }
@@ -58,10 +58,10 @@ router.get("/:userNo", function(req,res,next){
 
         dbController.query(sQuery, [userNo], (err, sjData) => {
             if(err){
-                console.log(err);
+                //console.log(err);
                 return res.send(JSON.stringify(err));
             }
-            console.log(sjData);
+            //console.log(sjData);
             return res.send(sjData);
         });
     }

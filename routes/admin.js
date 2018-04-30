@@ -8,7 +8,7 @@ var dbController = require("../database/databasecontroller.js");
 /******************************************************/
 
 router.get("/", function(req, res, next){
-    console.log(req.session);
+    //console.log(req.session);
     if(req.session == null){
         res.status(403);
         res.send(JSON.stringify({response: "You need to be logged in!"}));
@@ -19,11 +19,11 @@ router.get("/", function(req, res, next){
     
         dbController.query(sQuery, [roleName], (err, sjData) => {
             if(err){
-                console.log(err);
+                //console.log(err);
                 res.send(err);
             }
             res.send(sjData);
-            console.log(sjData);
+            //console.log(sjData);
         });
     } else {
         res.status(401);
@@ -46,10 +46,10 @@ router.put("/:userNo",function(req, res, next){
         var sp = "call UpdateRoles (?, ?);"
         dbController.query(sp, [userNo, roleName], (err, sjData) => {
             if(err){
-                console.log(err);
+                //console.log(err);
                 return res.send(JSON.stringify(err));
             }
-            console.log(sjData);
+            //console.log(sjData);
             return res.send(sjData);
         });
     } else {

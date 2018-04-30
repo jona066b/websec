@@ -16,9 +16,9 @@ router.get("/", function(req, res, next){
     dbController.query(sQuery, (err, sjData) => {
         if(err){
             return res.send(err);
-            console.log(err);
+            //console.log(err);
         }
-        console.log(sjData);
+        //console.log(sjData);
         return res.send(sjData);
        
     });
@@ -51,10 +51,10 @@ router.post("/", function(req,res,next){
         dbController.query(sp, [productNo, name, quantity, model, brand, image, color, 
         size, type, price, description], (err, sjData) => {
             if(err){
-                console.log(err);
+                //console.log(err);
                 res.send(err);
             } 
-                console.log(sjData);
+                //console.log(sjData);
                res.send(sjData);
                 
         });
@@ -92,10 +92,10 @@ router.put("/:productNo",function(req,res,next){
         dbController.query(sp, [productNo, name, quantity, model, brand, image, color, 
         size, type, price, description], (err, sjData) => {
             if(err){
-                console.log(err);
+                //console.log(err);
                  res.send(err);
             } else {
-                console.log(sjData);
+                //console.log(sjData);
                 res.send(sjData); 
             }
                    
@@ -124,10 +124,10 @@ router.delete("/:productNo", function(req,res,next){
     
         dbController.query(sQuery, [productNo], (err, sjData) => {
             if(err){
-                console.log(err);
+                //console.log(err);
                 return res.send(JSON.stringify(err));
             }
-            console.log(sjData);
+            //console.log(sjData);
             return res.send(sjData);
         });
     }
@@ -148,10 +148,10 @@ router.get("/:productNo", function(req,res,next){
 
     dbController.query(sQuery, [productNo], (err, sjData) => {
         if(err){
-            console.log(err);
+            //console.log(err);
             return res.send(JSON.stringify(err));
         }
-        console.log(sjData);
+        //console.log(sjData);
         return res.send(sjData);
     });
 });
@@ -168,10 +168,10 @@ router.get("/:productNo/comments", function(req, res, next){
                  " WHERE c.productNo = ?";
     dbController.query(sQuery, [productNo], (err, jData) => {
         if(err){
-            console.log(err);
+            //console.log(err);
             return res.send(err);
         }
-        console.log(jData);
+        //console.log(jData);
         return res.send(jData);
     });
 });

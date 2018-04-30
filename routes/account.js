@@ -20,13 +20,13 @@ router.post("/" , function(req, res, next){
     imageHandler.upload(req, res, function (err) {
         if (err) {
             // An error occurred when uploading
-            console.log("error occured: ");
+            //console.log("error occured: ");
             return
         }
         if(req.file){
             // Everything went fine
-            console.log("image uploaded");
-            console.log("req", req);
+            //console.log("image uploaded");
+            //console.log("req", req);
             image = req.file;
             imageName = image.filename;
         }
@@ -50,7 +50,7 @@ router.post("/" , function(req, res, next){
         dbController.query(sp, [userNo, name, address, phone, email, userName,
             pwHashSalt, pwSalt, imageName, roleName], (err, sjData) => {
             if(err){
-                console.log(err);
+                //console.log(err);
                 res.send(err);
             }
             var jData = JSON.parse(sjData);
@@ -72,18 +72,18 @@ router.post("/login", function(req, res, next){
 
     var userName = checkedParams[0];
     var password = checkedParams[1];
-    console.log(password);
-    console.log(userName);
+    //console.log(password);
+    //console.log(userName);
     var sQuery = "SELECT userNo, name, roleName, password, passwordSalt, userName, image FROM user AS u " +
         "JOIN role AS r ON u.roleNo = r.roleNo WHERE userName = ?";
     dbController.query(sQuery, [userName], (err, sjData) => {
         if(err){
-            console.log(err);
+            //console.log(err);
             return res.send(err);
         }
         var jData = JSON.parse(sjData);
         var numRows = jData.length;
-        console.log("jData.length: ", jData.length);
+        //console.log("jData.length: ", jData.length);
         if (numRows === 0) {
             res.status(401);
             return res.send(JSON.stringify({response: "User not found!"}));
@@ -103,7 +103,7 @@ router.post("/login", function(req, res, next){
                 req.session.userNo = jData[0].userNo;
                 req.session.name = jData[0].name;
                 req.session.image = jData[0].image;
-                console.log(req.session);
+                //console.log(req.session);
                 return res.send(JSON.stringify(req.session));
             }
         }
@@ -113,7 +113,7 @@ router.post("/login", function(req, res, next){
 
 router.get("/logout", function(req, res, next){
     req.session.destroy();
-    console.log(req.session);
+    //console.log(req.session);
     return res.send(JSON.stringify({response: "Successfully logged out!"}));
 
 });
@@ -135,7 +135,7 @@ router.put("/:userNo", function(req,res,next){
         var sQuery = "SELECT password, passwordSalt FROM user WHERE userNo = ?";
         dbController.query(sQuery, [userNo], (err, sjData) => {
             if(err){
-                console.log(err);
+                //console.log(err);
                 return res.send(err);
             }
             var jData = JSON.parse(sjData);
@@ -155,10 +155,10 @@ router.put("/:userNo", function(req,res,next){
                 var sQuery = "UPDATE user SET password = ?, passwordSalt = ? WHERE userNo = ?";
                 dbController.query(sQuery, [pwHashSalt, pwSalt, userNo], (err, sjData) => {
                     if(err){
-                        console.log(err);
+                        //console.log(err);
                         return res.send(err);
                     }
-                    console.log(sjData);
+                    //console.log(sjData);
                     return res.send(JSON.stringify({response: "Password successfully updated!"}));
                 });
             }
@@ -179,10 +179,10 @@ router.get("/", function(req,res,next){
 
         dbController.query(sQuery, [userNo], (err, sjData) => {
             if(err){
-                console.log(err);
+                //console.log(err);
                 return res.send(JSON.stringify(err));
             }
-            console.log(sjData);
+            //console.log(sjData);
             return res.send(sjData);
         });
     }
@@ -207,10 +207,10 @@ router.post("/comment", function(req, res, next){
         var sp = "call AddUpdateComment(?, ?, ?, ?)";
         dbController.query(sp, [commentNo, checkedParams[0], userNo, checkedParams[1]], (err, jData) => {
             if(err){
-                console.log(err);
+                //console.log(err);
                  res.send(err);
             } 
-            console.log(jData);
+            //console.log(jData);
                  res.send(jData);
         });
     }
@@ -231,10 +231,10 @@ router.put("/comment/:commentNo", function(req, res, next){
         var sp = "call AddUpdateComment(?, ?, ?, ?)";
         dbController.query(sp, [commentNo, checkedParams[1], userNo, checkedParams[2]], (err, jData) => {
             if(err){
-                console.log(err);
+                //console.log(err);
                 return res.send(err);
             } 
-            console.log(jData);
+            //console.log(jData);
             return res.send(jData);
         });
     }

@@ -4,17 +4,17 @@ $(function() {
     $.get( '/product' , function( data ){
     }).done(function( data ) {
         // TO DO ON DONE
-        console.log("data: ", data);
-        console.log("Success");
+        //console.log("data: ", data);
+        //console.log("Success");
         showProducts(data);
     }).fail(function(data, textStatus, xhr) {
         //This shows status code eg. 403
-        console.log("error", data.status);
+        //console.log("error", data.status);
         //This shows status message eg. Forbidden
-        console.log("STATUS: "+xhr);
+        //console.log("STATUS: "+xhr);
     }).always(function() {
         //TO-DO after fail/done request.
-        console.log("ended");
+        //console.log("ended");
     });
 
 
@@ -95,7 +95,7 @@ $('#filters').on( 'click', 'button', function() {
     var filterValue = $( this ).attr('data-filter');
     // use filterFn if matches value
     filterValue = filterFns[ filterValue ] || filterValue;
-    console.log("filterValue: ", filterValue);
+    //console.log("filterValue: ", filterValue);
     $('#lblShopList').isotope({ filter: filterValue });
 });
 
@@ -119,7 +119,7 @@ function singleProduct(){
     $(".btnViewProduct").click(function () {
         event.preventDefault();
         var productNo = $(this).attr('data-id');
-        console.log("ProductId: ",productNo );
+        //console.log("ProductId: ",productNo );
         window.location.replace("/selected-product/" + productNo);  
     });
 }

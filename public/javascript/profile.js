@@ -3,17 +3,17 @@ $(function() {
     $.get( '/user' , function( data ){
     }).done(function( data ) {
         // TO DO ON DONE
-        console.log("data: ", data);
-        console.log("Success");
+        //console.log("data: ", data);
+        //console.log("Success");
         showUser(data);
     }).fail(function(data, textStatus, xhr) {
         //This shows status code eg. 403
-        console.log("error", data.status);
+        //console.log("error", data.status);
         //This shows status message eg. Forbidden
-        console.log("STATUS: "+xhr);
+        //console.log("STATUS: "+xhr);
     }).always(function() {
         //TO-DO after fail/done request.
-        console.log("ended");
+        //console.log("ended");
     });
 });
 

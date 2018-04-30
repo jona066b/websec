@@ -42,14 +42,14 @@ $("#btnLogin").click(function () {
             window.location.replace("/profile");                   
         }).fail(function(data, textStatus, xhr) {
             //This shows status code eg. 403
-            console.log("error", data.status);
+            //console.log("error", data.status);
             //This shows status message eg. Forbidden
-            console.log("STATUS: "+xhr);
+            //console.log("STATUS: "+xhr);
             var response = JSON.parse(data.responseText);
             $('#login-err-msg').text(response.response);
         }).always(function() {
             //TO-DO after fail/done request.
-            console.log("ended");
+            //console.log("ended");
         });
     }
 });

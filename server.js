@@ -103,7 +103,7 @@ app.get("/profile", (req, res) => {
     var sMainHtml;
     var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
     sTopHtml = sTopHtml.replace('{{title}}','Profile');
-    sTopHtml = sTopHtml.replace('{{active-home}}',' active');
+    sTopHtml = sTopHtml.replace('{{active-profile}}',' active');
     sTopHtml = sTopHtml.replace(/{{active-.*}}/g ,'');
     sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/profile.js"></script>'+ 
     '<script src="../public/javascript/logout.js"></script>');
@@ -130,15 +130,15 @@ app.get("/profile", (req, res) => {
         
         res.status(403);
         res.redirect("/");
-        console.log(req.session);
+        //console.log(req.session);
     }
 });
 
 app.get("/selected-product/:UID", (req, res) => {
     var selectedProductID = req.sanitize(req.params.UID);
-    sTopHtml = fs.readFileSync( __dirname + '/public/components/top.html', 'utf8' );
-    sMainHtml = fs.readFileSync( __dirname + '/views/singleProduct.html', 'utf8' );
-    sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
+    var sTopHtml = fs.readFileSync( __dirname + '/public/components/top.html', 'utf8' );
+    var sMainHtml = fs.readFileSync( __dirname + '/views/singleProduct.html', 'utf8' );
+    var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
 
     if(req.session != null && req.session.isLoggedIn == true){
         sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/shop.js"></script>' + 
