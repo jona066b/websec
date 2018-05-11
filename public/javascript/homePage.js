@@ -31,7 +31,7 @@ function showProducts(data) {
                                     <span class="caption simple-caption">\
                                        <span class="name">'+data[i].name+'</span>\
                                        <span class="price">'+data[i].prize+' DKK</span>\
-                                       <button class="btnBuyProduct btn btn-gold my-2 my-sm-0 text-uppercase" data-id="'+data[i].productNo+'">Buy</button>\
+                                       <button class="btnViewProduct btn btn-gold my-2 my-sm-0 text-uppercase" data-id="'+ data[i].productNo +'">View</button>\
                                     </span>\
                                 </a>\
                            </div>';
@@ -40,7 +40,7 @@ function showProducts(data) {
 
     }
     $("#lblHomePageProducts").html(htmlShopProducts);
-
+    accessSingleProduct();
 }
 
 checkSession();

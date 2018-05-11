@@ -49,7 +49,7 @@ $(function() {
 });
 
 sessionCheck = checkSession();
-console.log("sessionCheck: ", sessionCheck);
+//console.log("sessionCheck: ", sessionCheck);
 
 function showComments(data){
     var jData = JSON.parse(data);
@@ -120,7 +120,7 @@ function addComment() {
 
         var txtComment = $("textarea#txtComment").val();
         var sjComment = {"comment":txtComment,"userNo": jCookie.userNo, "productNo": productId};
-        console.log(sjComment);
+        //console.log(sjComment);
 
         $.post( '/user/comment' , sjComment , function( data ){
         }).done(function(data) {
@@ -135,7 +135,7 @@ function addComment() {
             }
             var formatDate = createTime.toLocaleString(locale, {month: "long"}) + " " + createTime.getDate() + ", "
                 + createTime.getFullYear() + " @ " + createTime.getHours() + ":" + minutes;
-            console.log(formatDate);
+            //console.log(formatDate);
             var htmlComment =   '<div class="comment-wrap">\
                             <div class="photo">\
                                 <div class="avatar" style="background-image: url(https://crimsonems.org/wp-content/uploads/2017/10/profile-placeholder.gif")"></div>\

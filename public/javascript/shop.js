@@ -35,19 +35,14 @@ function showProducts(data) {
                                     <span class="caption simple-caption">\
                                        <span class="name">'+data[i].name+'</span>\
                                        <span class="price">'+data[i].prize+' DKK</span>\
-                                       <button class="btnBuyProduct btn btn-gold my-2 my-sm-0 text-uppercase" type="button" data-id="'+data[i].productNo+'">Buy</button>\
                                        <button class="btnViewProduct btn btn-gold my-2 my-sm-0 text-uppercase" data-id="'+ data[i].productNo +'">View</button>\
                                     </span>\
                                 </a>\
                            </div>';
-
         htmlShopProducts += htmlShopProduct;
     }
-
     $("#lblShopList").html(htmlShopProducts);
-
-    singleProduct();
-
+    accessSingleProduct();
 }
 
 // function initIsotop() {
@@ -105,12 +100,4 @@ $('.button-group').each( function( i, buttonGroup ) {
     });
 });
 
-function singleProduct(){
-    $(".btnViewProduct").click(function () {
-        event.preventDefault();
-        var productNo = $(this).attr('data-id');
-        //console.log("ProductId: ",productNo );
-        window.location.replace("/selected-product/" + productNo);  
-    });
-}
 checkSession();
