@@ -11,7 +11,7 @@ $(function() {
             userName: "required",
             password: {
                 required: true,
-                //minlength: 5
+                //minlength: 6
             }
         },
         // Specify validation error messages
@@ -19,13 +19,13 @@ $(function() {
             userName: "Please enter your user name",
             password: {
                 required: "Please provide a password",
-                //minlength: "Your password must be at least 5 characters long"
+                //minlength: "Your password must be at least 6 characters long"
             }
         },
         // Make sure the form is submitted to the destination defined
         // in the "action" attribute of the form when valid
         submitHandler: function(form) {
-            // form.submit();
+
         }
     });
 });
@@ -37,7 +37,6 @@ $("#btnLogin").click(function () {
         $.post( '/user/login' , oFrmUser , function( data ){
         }).done(function(data) {
             // TO DO ON DONE
-            toggleBtnsVisibility();
             localStorage.setItem("cookie", data);
             window.location.replace("/profile");                   
         }).fail(function(data, textStatus, xhr) {
@@ -53,13 +52,3 @@ $("#btnLogin").click(function () {
         });
     }
 });
-function toggleBtnsVisibility() {
-
-    $('#login-err-msg').text('');
-    $('#modalLoginForm').modal("toggle");
-    $('#profile-link').removeClass('d-none');
-    $( "#btn-logIn").addClass('d-none');
-    $( "#btn-logOut").removeClass('d-none');
-    $( "#btn-register").addClass('d-none');
-
-}

@@ -55,15 +55,9 @@ function showUser(data) {
 
 }
 
-function hideElements() {
-    $('#profile-link').removeClass('d-none');
-    $( "#btn-logIn").addClass('d-none');
-    $( "#btn-logOut").removeClass('d-none');
-    $( "#btn-register").addClass('d-none');
-}
-
-hideElements();
-
 $("#profile-link").click(function() {
     window.location.replace("/profile");  
 });
+
+
+checkSession();

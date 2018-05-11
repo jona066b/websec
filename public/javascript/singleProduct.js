@@ -1,8 +1,9 @@
 var url = window.location.href;
 var productId = url.substring(url.lastIndexOf('/') + 1);
-
+var sessionCheck;
 // Wait for the DOM to be ready
 $(function() {
+
     //get product
     $.get( '/product/' + productId , function( data ){
 
@@ -20,7 +21,7 @@ $(function() {
     }).always(function() {
         //TO-DO after fail/done request.
 
-        //console.log("ended");
+       // console.log("ended");
     });
 
     //get product comments
@@ -29,6 +30,8 @@ $(function() {
     }).done(function( data ) {
         // TO DO ON DONE
         //console.log("Success");
+        //console.log("data", data);
+
         showComments(data);
 
     }).fail(function(data, textStatus, xhr) {
@@ -42,20 +45,11 @@ $(function() {
 
         //console.log("ended");
     });
+
 });
 
-function checkSession() {
-    var cookie = localStorage.getItem("cookie");
-    //console.log("cookie: ", cookie);
-    if(cookie !== null){
-        $('#profile-link').removeClass('d-none');
-        $( "#btn-logIn").addClass('d-none');
-        $( "#btn-logOut").removeClass('d-none');
-        $( "#btn-register").addClass('d-none');
-        return true;
-    }
-    return false;
-}
+sessionCheck = checkSession();
+console.log("sessionCheck: ", sessionCheck);
 
 function showComments(data){
     var jData = JSON.parse(data);
@@ -63,7 +57,6 @@ function showComments(data){
     var htmlComment = "";
     var loggedUserComment = "";
     $("#comments").html("");
-    var sessionCheck = checkSession();
     if(sessionCheck == true){
         loggedUserComment = '<div class="comment-wrap">\
                         <div class="photo">\
@@ -127,12 +120,12 @@ function addComment() {
 
         var txtComment = $("textarea#txtComment").val();
         var sjComment = {"comment":txtComment,"userNo": jCookie.userNo, "productNo": productId};
-        //console.log(sjComment);
+        console.log(sjComment);
 
         $.post( '/user/comment' , sjComment , function( data ){
         }).done(function(data) {
             // TO DO ON DONE
-            // console.log("Success");
+             console.log("Success");
             var jComment = JSON.parse(data);
             var createTime = new Date(jComment[0][0].commentCreateDateTime);
             var locale = "en-us";
@@ -142,7 +135,7 @@ function addComment() {
             }
             var formatDate = createTime.toLocaleString(locale, {month: "long"}) + " " + createTime.getDate() + ", "
                 + createTime.getFullYear() + " @ " + createTime.getHours() + ":" + minutes;
-            //console.log(formatDate);
+            console.log(formatDate);
             var htmlComment =   '<div class="comment-wrap">\
                             <div class="photo">\
                                 <div class="avatar" style="background-image: url(https://crimsonems.org/wp-content/uploads/2017/10/profile-placeholder.gif")"></div>\
@@ -160,16 +153,16 @@ function addComment() {
             $("#comments").append(htmlComment);
         }).fail(function(data, textStatus, xhr) {
             //This shows status code eg. 403
-            //console.log("error", data.status);
+            console.log("error", data.status);
             //This shows status message eg. Forbidden
-            //console.log("STATUS: "+xhr);
+            console.log("STATUS: "+xhr);
 
             var response = JSON.parse(data.responseText);
-            //console.log("response: ", response);
+            console.log("response: ", response);
 
         }).always(function() {
             //TO-DO after fail/done request.
-            //console.log("ended");
+            console.log("ended");
         });
     });
 }
@@ -195,5 +188,5 @@ function showProduct(data) {
     $("#product-container").html(htmlShopProduct);
 }
 
-checkSession();
+
 

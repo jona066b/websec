@@ -42,3 +42,5 @@ function showProducts(data) {
     $("#lblHomePageProducts").html(htmlShopProducts);
 
 }
+
+checkSession();

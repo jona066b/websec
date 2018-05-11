@@ -20,7 +20,7 @@ $(function() {
             userName:   "required",
             password: {
                 required: true,
-                //minlength: 5
+                minlength: 6
             },
             image: {
                 required: false,
@@ -34,7 +34,7 @@ $(function() {
             userName: "Please enter your user name",
             password: {
                 required: "Please provide a password",
-                //minlength: "Your password must be at least 5 characters long"
+                minlength: "Your password must be at least 6 characters long"
             },
             email: {
                 required: "We need your email address to contact you",

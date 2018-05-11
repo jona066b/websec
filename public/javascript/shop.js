@@ -7,6 +7,7 @@ $(function() {
         //console.log("data: ", data);
         //console.log("Success");
         showProducts(data);
+
     }).fail(function(data, textStatus, xhr) {
         //This shows status code eg. 403
         //console.log("error", data.status);
@@ -17,18 +18,8 @@ $(function() {
         //console.log("ended");
     });
 
-
+   // initIsotop();
 });
-
-function checkSession() {
-    var cookie = localStorage.getItem("cookie");
-    if(cookie !== null){
-        $('#profile-link').removeClass('d-none');
-        $( "#btn-logIn").addClass('d-none');
-        $( "#btn-logOut").removeClass('d-none');
-        $( "#btn-register").addClass('d-none');
-    } 
-}
 
 function showProducts(data) {
     var htmlShopProducts = "";
@@ -54,28 +45,28 @@ function showProducts(data) {
     }
 
     $("#lblShopList").html(htmlShopProducts);
-    //initIsotop();
+
     singleProduct();
+
 }
 
-/*
-function initIsotop() {
-    $('#lblShopList').isotope({
-        // options...
-        itemSelector: '.single-product',
-        getSortData: {
-            name: '.name',
-            price: function( itemElem ) {
-                // get text of .weight element
-                var price = $( itemElem ).find('.price').text();
-                // replace parens (), and parse as float
-                return parseFloat( price.replace( 'DKK', '') );
-            },
-            category: '[data-category]'
-        }
-    });
-}
-*/
+// function initIsotop() {
+//     $('#lblShopList').isotope({
+//         // options...
+//         itemSelector: '.single-product',
+//         getSortData: {
+//             name: '.name',
+//             price: function( itemElem ) {
+//                 // get text of .weight element
+//                 var price = $( itemElem ).find('.price').text();
+//                 // replace parens (), and parse as float
+//                 return parseFloat( price.replace( 'DKK', '') );
+//             },
+//             category: '[data-category]'
+//         }
+//     });
+// }
+
 // filter functions
 var filterFns = {
     // show if number is greater than 50
@@ -113,7 +104,6 @@ $('.button-group').each( function( i, buttonGroup ) {
         $( this ).addClass('is-checked');
     });
 });
-
 
 function singleProduct(){
     $(".btnViewProduct").click(function () {

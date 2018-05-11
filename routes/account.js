@@ -20,7 +20,7 @@ router.post("/" , function(req, res, next){
     imageHandler.upload(req, res, function (err) {
         if (err) {
             // An error occurred when uploading
-            //console.log("error occured: ");
+            console.log("error occured: ");
             return
         }
         if(req.file){
@@ -54,6 +54,7 @@ router.post("/" , function(req, res, next){
                 res.send(err);
             }
             var jData = JSON.parse(sjData);
+            console.log("jData: ", jData);
             if(jData[1].length > 0){
                 return res.send(sjData);
             } else {
