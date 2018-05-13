@@ -5,34 +5,29 @@ dbController.query = (sQuery, params, fCallback) => {
     var jResult = {};
     global.gPool.getConnection(function(err, connection){
         if(err){
-            jResult = JSON.stringify(err);
             process.exit();
-            return fCallback(true, jResult);
+            return fCallback(true, err);
         } else {
             if(params.length > 0){
                 connection.query(sQuery, params, (err, jData) => {
                     if(err){
-                        jResult = JSON.stringify(err);
                         connection.release();
-                        return fCallback(true, jResult);
+                        return fCallback(true, err);
                     }
-                    jResult = JSON.stringify(jData);
                     connection.release();
-                    return fCallback(false, jResult); 
+                    return fCallback(false, jData);
                 });
             } else {
                 connection.query(sQuery, (err, jData) => {
                     if(err){
-                        jResult = JSON.stringify(err);
                         connection.release();
-                        return fCallback(true, jResult);
+                        return fCallback(true, err);
                     }
-                    jResult = JSON.stringify(jData);
                     connection.release();
-                    return fCallback(false, jResult); 
+                    return fCallback(false, jData);
                 });
             }
-        }      
+        }
     });
 }
 module.exports = dbController;

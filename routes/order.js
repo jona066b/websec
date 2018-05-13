@@ -5,7 +5,7 @@ var router = express.Router();
 
 /************************Modules************************/
 var dbController = require(__dirname+ "/database/databaseController.js");
-var parameterChecker = require("../helpers/parameterChecker.js"); 
+var parameterChecker = require("../helpers/parameterChecker.js");
 var account = require(__dirname + "/account.js");
 /******************************************************/
 
@@ -19,19 +19,19 @@ router.get("/:orderNo", function(req,res,next){
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     }
     else if (jSession != null && jSession.isLoggedIn == true && jSession.isInRole == "Support"){
-        var inputParams = []; 
-        inputParams.push(req.params.orderNo); 
-        var checkedParams = parameterChecker.check(req, inputParams); 
+        var inputParams = [];
+        inputParams.push(req.params.orderNo);
+        var checkedParams = parameterChecker.check(req, inputParams);
 
         var orderNo = checkedParams[0];
         var sQuery = "SELECT * from order WHERE orderNo = ?";
 
         dbController.query(sQuery, [orderNo], (err, sjData) => {
             if(err){
-                //console.log(err);
+                console.log(err);
                 return res.send(JSON.stringify(err));
             }
-            //console.log(sjData);
+            console.log(sjData);
             return res.send(sjData);
         });
     }
@@ -49,19 +49,19 @@ router.get("/:userNo", function(req,res,next){
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     }
     else if (jSession != null && jSession.isLoggedIn == true && jSession.isInRole == "Support"){
-        var inputParams = []; 
-        inputParams.push(req.params.userNo); 
-        var checkedParams = parameterChecker.check(req, inputParams); 
+        var inputParams = [];
+        inputParams.push(req.params.userNo);
+        var checkedParams = parameterChecker.check(req, inputParams);
 
         var userNo = checkedParams[0];
         var sQuery = "SELECT * FROM order AS o JOIN user AS u ON o.userNo = u.userNo";
 
         dbController.query(sQuery, [userNo], (err, sjData) => {
             if(err){
-                //console.log(err);
+                console.log(err);
                 return res.send(JSON.stringify(err));
             }
-            //console.log(sjData);
+            console.log(sjData);
             return res.send(sjData);
         });
     }

@@ -3,7 +3,7 @@ var hasher = {};
 
 var generateSalt = function(){
     return crypto.randomBytes(16)
-                 .toString('hex');
+        .toString('hex');
 };
 var generateHash = function(password, salt){
     var iterations = 10000;
@@ -26,13 +26,13 @@ hasher.verifyPw = (password, dbSalt, dbHash) => {
     var jResult = {};
     var _hash = crypto.pbkdf2Sync(password, dbSalt, iterations, 64, 'sha256').toString("hex");
     if(dbHash == _hash){
-       jResult = JSON.stringify({status: true});
-       return jResult;
+        jResult = JSON.stringify({status: true});
+        return jResult;
     } else{
         jResult = JSON.stringify({status: false});
         return jResult;
     }
-    
+
 }
 
 module.exports = hasher;
