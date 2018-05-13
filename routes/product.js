@@ -138,13 +138,9 @@ router.delete("/:productNo", function(req,res,next){
     }
 });
 
-// Search for a specific product by product id
+// Get a specific product by product id
 router.get("/:productNo", function(req,res,next){
-    if(req.session == null){
-        res.status(403);
-        res.send(JSON.stringify({response: "You need to be logged in!"}));
-    }
-    else if (req.session != null && req.session.isLoggedIn == true && req.session.isInRole == "Admin"){
+
         var inputParams = [];
         inputParams.push(req.params.productNo);
         var checkedParams = parameterChecker.check(req, inputParams);
@@ -160,11 +156,7 @@ router.get("/:productNo", function(req,res,next){
             console.log(sjData);
             return res.send(sjData);
         });
-    }
-    else {
-        res.status(401);
-        res.send(JSON.stringify({response: "Unauthorized access!"}));
-    }
+
 });
 
 router.get("/:productNo/comments", function(req, res, next){

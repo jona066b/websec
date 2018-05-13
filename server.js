@@ -135,14 +135,6 @@ app.get("/selected-product/:UID", (req, res) => {
     var sMainHtml = fs.readFileSync( __dirname + '/views/singleProduct.html', 'utf8' );
     var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
 
-    if(req.session != null && req.session.isLoggedIn == true){
-        sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/general.js"></script>' +
-            '<script src="../public/javascript/shop.js"></script>' +
-        '<script src="../public/javascript/logout.js"></script>' +
-            '<script src="../public/javascript/profile.js"></script>' +
-        '<script src="../public/javascript/singleProduct.js"></script>');
-    }
-    //replace placeholders
 
     sTopHtml = sTopHtml.replace('{{title}}','Shop');
     sTopHtml = sTopHtml.replace('{{active-shop}}',' active');

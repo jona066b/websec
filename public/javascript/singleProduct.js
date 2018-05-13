@@ -168,21 +168,22 @@ function addComment() {
 }
 
 function showProduct(data) {
-    var jData = JSON.parse(data);
-    //console.log(jData);
+    console.log(data);
+
+
     var htmlShopProduct = "";
     $("#product-container").html("");
     htmlShopProduct =   '<div class="card" style="width: 30rem; height: 50rem;">\
                                 <img class="card-img-top" src="http://via.placeholder.com/450x350" alt="Card image cap">\
                                      <div class="card-body">\
-                                         <h5 class="card-title">' + jData[0].name +'</h5>\
-                                         <p class="card-text">Color: ' + jData[0].color +'</p>\
-                                         <p class="card-text">Model: ' + jData[0].model +'</p>\
-                                         <p class="card-text">Prize: ' + jData[0].prize +' DKK</p>\
-                                         <p class="card-text">Size: ' + jData[0].size +'</p>\
-                                         <p class="card-text">Type: ' + jData[0].type +'</p>\
-                                         <p class="card-text">Description: ' + jData[0].description +'</p>\
-                                         <p class="card-text">Quantity: ' + jData[0].quantity +'</p>\
+                                         <h5 class="card-title">' + data[0].name +'</h5>\
+                                         <p class="card-text">Color: ' + data[0].color +'</p>\
+                                         <p class="card-text">Model: ' + data[0].model +'</p>\
+                                         <p class="card-text">Prize: ' + data[0].prize +' DKK</p>\
+                                         <p class="card-text">Size: ' + data[0].size +'</p>\
+                                         <p class="card-text">Type: ' + data[0].type +'</p>\
+                                         <p class="card-text">Description: ' + data[0].description +'</p>\
+                                         <p class="card-text">Quantity: ' + data[0].quantity +'</p>\
                                      </div>\
                              </div>';
     $("#product-container").html(htmlShopProduct);

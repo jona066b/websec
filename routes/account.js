@@ -2,7 +2,7 @@
 global.gSession = null;
 const express = require("express");
 const router = express.Router();
-const jwt = require("jwt-simple")
+const jwt = require("jwt-simple");
 const nodemailer = require('nodemailer');
 const appsettings = require("../appsettings.json");
 /*******************************************************/
