@@ -20,7 +20,8 @@ $(function() {
             userName:   "required",
             password: {
                 required: true,
-                minlength: 6
+                minlength: 8,
+                mypassword: true
             },
             image: {
                 required: false,
@@ -34,7 +35,7 @@ $(function() {
             userName: "Please enter your user name",
             password: {
                 required: "Please provide a password",
-                minlength: "Your password must be at least 6 characters long"
+                minlength: "Your password must be at least 8 characters long"
             },
             email: {
                 required: "We need your email address to contact you",
@@ -48,6 +49,10 @@ $(function() {
         }
     });
 });
+$.validator.addMethod('mypassword', function(value, element) {
+        return this.optional(element) || (value.match(/[a-zA-Z]/) && value.match(/[0-9]/));
+    },
+    'Password must contain at least one numeric and one alphabetic character.');
 
 $("#proceed-to-login").click(function () {
 

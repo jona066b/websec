@@ -27,7 +27,6 @@ app.use(bodyParser.json({ type: 'application/*+json' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/public", express.static("public"));
 app.use(expressSanitizer());
-app.use(bodyParser.urlencoded({'extended':'true'}));
 
 
 /***********************Modules***********************/

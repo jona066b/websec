@@ -11,7 +11,7 @@ $(function() {
             userName: "required",
             password: {
                 required: true,
-                //minlength: 6
+                //minlength: 8
             }
         },
         // Specify validation error messages
@@ -19,7 +19,7 @@ $(function() {
             userName: "Please enter your user name",
             password: {
                 required: "Please provide a password",
-                //minlength: "Your password must be at least 6 characters long"
+                //minlength: "Your password must be at least 8 characters long"
             }
         },
         // Make sure the form is submitted to the destination defined
