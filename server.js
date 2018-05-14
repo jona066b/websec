@@ -67,7 +67,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/shop", (req, res) => {
-
+    console.log(req.session);
     var sTopHtml = fs.readFileSync( __dirname + '/public/components/top.html', 'utf8' );
     var sMainHtml = fs.readFileSync( __dirname + '/views/shop.html', 'utf8' );
     var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
@@ -93,6 +93,7 @@ app.get("/shop", (req, res) => {
 });
 
 app.get("/profile", (req, res) => {
+    console.log(req.session);
     var sTopHtml = fs.readFileSync( __dirname + '/public/components/top.html', 'utf8' );
     var sMainHtml;
     var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );

@@ -482,7 +482,6 @@ router.get("/verify-new-location/:token", function(req, res, next){
     }
 });
 
-
 router.post("/resend-activataion-token", function(req, res, next) {
     var email = req.sanitize(req.body.email);
     if(email != ""){
@@ -808,7 +807,7 @@ router.post("/comment", function(req, res, next){
 });
 
 router.put("/comment/:commentNo", function(req, res, next){
-    if(req.session == null){
+    if(req.session == null && req.session.isLoggedIn === undefined){
         res.status(403);
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     }
@@ -819,15 +818,55 @@ router.put("/comment/:commentNo", function(req, res, next){
 
         var commentNo = checkedParams[0];
         var userNo = req.session.userNo;
-        var sp = "call AddUpdateComment(?, ?, ?, ?)";
-        dbController.query(sp, [commentNo, checkedParams[1], userNo, checkedParams[2]], (err, jData) => {
-            if(err){
-                console.log(err);
-                return res.send(err);
-            }
-            console.log(jData);
-            return res.send(jData);
-        });
+        if(commentNo != "" && userNo != ""){
+            var sp = "call AddUpdateComment(?, ?, ?, ?)";
+            dbController.query(sp, [commentNo, checkedParams[1], userNo, checkedParams[2]], (err, jData) => {
+                if(err){
+                    console.log(err);
+                    res.status(500);
+                    return res.send(JSON.stringify({response: "Something went wrong"}));
+                }
+                console.log(jData);
+                res.status(200);
+                return res.send(jData);
+            });
+        } else {
+            res.status(400);
+            return res.send(JSON.stringify({response: "Bad request"}));
+        }
+        
+    }
+});
+
+router.delete("/comment/:commentNo", function(req, res, next){
+    if(req.session == null && req.session.isLoggedIn === undefined){
+        res.status(403);
+        res.send(JSON.stringify({response: "You need to be logged in!"}));
+    }
+    if(req.session != null && req.session.isLoggedIn == true){
+        var inputParams= [];
+        inputParams.push(req.params.commentNo);
+        var checkedParams = parameterChecker.check(req, inputParams);
+
+        var commentNo = checkedParams[0];
+        var userNo = req.session.userNo;
+        if(commentNo != "" && userNo != ""){
+            var sQuery = "DELETE FROM comment WHERE commentNo = ? AND userNo = ?";
+            dbController.query(sQuery, [commentNo, userNo], (err, jData) => {
+                if(err){
+                    console.log(err);
+                    res.status(500);
+                    return res.send(JSON.stringify({response: "Something went wrong"}));
+                }
+                console.log(jData);
+                res.status(200);
+                return res.send(jData);
+            });
+        } else {
+            res.status(400);
+            return res.send(JSON.stringify({response: "Bad request"}));
+        }
+        
     }
 });
 module.exports = router;

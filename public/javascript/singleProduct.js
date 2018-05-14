@@ -31,7 +31,7 @@ $(function() {
         // TO DO ON DONE
         //console.log("Success");
         //console.log("data", data);
-
+        console.log(data);
         showComments(data);
 
     }).fail(function(data, textStatus, xhr) {
@@ -49,10 +49,23 @@ $(function() {
 });
 
 sessionCheck = checkSession();
-//console.log("sessionCheck: ", sessionCheck);
 
-function showComments(data){
-    var jData = JSON.parse(data);
+
+function showComments(jData){
+    var userImage = "";
+    var sessionVars = JSON.parse(localStorage.getItem("cookie"));
+    console.log("SESSION" , sessionVars)
+    if(sessionCheck == true){
+        console.log("SESSION CHECK " , sessionCheck)
+        if(sessionVars.image != ""){
+            userImage = "../public/images/uploads/" + sessionVars.image;
+            console.log("USER IMAGE " , userImage)
+        } else {
+            userImage = "https://crimsonems.org/wp-content/uploads/2017/10/profile-placeholder.gif";
+        }
+        
+    }
+   
     var htmlComments = "";
     var htmlComment = "";
     var loggedUserComment = "";
@@ -60,7 +73,7 @@ function showComments(data){
     if(sessionCheck == true){
         loggedUserComment = '<div class="comment-wrap">\
                         <div class="photo">\
-                            <div class="avatar" style="background-image: url(https://crimsonems.org/wp-content/uploads/2017/10/profile-placeholder.gif")"></div>\
+                            <div class="avatar" style="background-image: url(' + userImage +'")"></div>\
                         </div>\
                         <div class="comment-block">\
                             <form id="frmComment">\
@@ -72,7 +85,7 @@ function showComments(data){
     } else {
         loggedUserComment = '<div class="comment-wrap">\
                                 <div class="photo">\
-                                    <div class="avatar" style="background-image: url(https://crimsonems.org/wp-content/uploads/2017/10/profile-placeholder.gif")"></div>\
+                                    <div class="avatar" style="background-image: url(' + userImage +'")"></div>\
                                 </div>\
                                 <div class="comment-block">\
                                     <form action="">\
@@ -83,6 +96,14 @@ function showComments(data){
                             </div>';
     }
     for (let i = 0; i < jData.length; i++) {
+        console.log(jData);
+        var userImages = "";
+        if(jData[i].Image != "" && jData[i].Image != null){
+            userImages = "../public/images/uploads/" + jData[i].Image;
+            console.log("USER IMAGE " , userImage)
+        } else {
+            userImages = "https://crimsonems.org/wp-content/uploads/2017/10/profile-placeholder.gif";
+        }
         var createTime = new Date(jData[i].commentCreateDateTime);
         var locale = "en-us";
         var minutes = createTime.getMinutes();
@@ -91,18 +112,30 @@ function showComments(data){
         }
         var formatDate = createTime.toLocaleString(locale, {month: "long"}) + " " + createTime.getDate() + ", "
             + createTime.getFullYear() + " @ " + createTime.getHours() + ":" + minutes;
+            var sBtnDelete = '<button class="btnsComment btn btn-gold my-2 my-sm-0 text-uppercase d-none" type="button">Delete</button>'
+            var sBtnUpdate = '<button class="btnsComment btn btn-gold my-2 my-sm-0 text-uppercase d-none" type="button" >Update</button>'
+            if(sessionVars !== null){
+                if(jData[i].userNo === sessionVars.userNo){
+                    sBtnDelete = '<button data-id="' + jData[i].commentNo +'" id="btnDeleteComment" class="btnsComment btn btn-gold my-2 my-sm-0 text-uppercase" type="button">Delete</button>'
+                    sBtnUpdate = '<button data-id="' + jData[i].commentNo +'" id= "btnUpdateComment" class="btnsComment btn btn-gold my-2 my-sm-0 text-uppercase" type="button" >Update</button>'
+                }
+            }
+            
+
         htmlComment =   '<div class="comment-wrap">\
                             <div class="photo">\
-                                <div class="avatar" style="background-image: url(https://crimsonems.org/wp-content/uploads/2017/10/profile-placeholder.gif")"></div>\
+                                <div class="avatar" style="background-image: url(' + userImages +'")"></div>\
                             </div>\
-                            <div class="comment-block">\
+                            <div class="comment-block" data-id="' + jData[i].commentNo +' ">\
                                 <p class="comment-text">' + jData[i].comment +'</p>\
                                 <div class="bottom-comment">\
                                 <div class="comment-date">' + formatDate +'</div>\
                                 <ul class="comment-actions">\
-                                    <li class="complain">By ' + jData[i].email + '</li>\
+                                    <li class="complain">By ' + jData[i].userName + '</li>\
                                 </ul>\
                             </div>\
+                              ' + sBtnDelete +'\
+                              ' + sBtnUpdate +'\
                         </div>\
                     </div>';
         htmlComments += htmlComment;
@@ -110,7 +143,9 @@ function showComments(data){
     $("#comments").html(htmlComments);
     $("#comments").prepend(loggedUserComment);
     addComment();
-
+    btnDleteComment();
+    btnUpdateComment();
+    
 }
 
 function addComment() {
@@ -123,10 +158,10 @@ function addComment() {
         //console.log(sjComment);
 
         $.post( '/user/comment' , sjComment , function( data ){
-        }).done(function(data) {
+        }).done(function(jComment) {
             // TO DO ON DONE
              console.log("Success");
-            var jComment = JSON.parse(data);
+            
             var createTime = new Date(jComment[0][0].commentCreateDateTime);
             var locale = "en-us";
             var minutes = createTime.getMinutes();
@@ -151,6 +186,8 @@ function addComment() {
                         </div>\
                     </div>';
             $("#comments").append(htmlComment);
+            $("#comments").load("#comments");
+    
         }).fail(function(data, textStatus, xhr) {
             //This shows status code eg. 403
             console.log("error", data.status);
@@ -188,6 +225,37 @@ function showProduct(data) {
                              </div>';
     $("#product-container").html(htmlShopProduct);
 }
+
+
+
+function btnDleteComment() {
+    $("#btnDeleteComment").click(function() {
+        var commentNo = $(this).attr('data-id');
+        $.ajax({
+            url: "/user/comment/" + commentNo,
+            type: "DELETE",
+            contentType: "application/json", 
+            dataType: "json", 
+            success: function(data){
+                console.log(data);
+                
+            }, 
+            error: function(data){
+                console.log(data);
+            }
+        });
+    });
+    
+}
+
+function btnUpdateComment() {
+    $("#btnUpdateComment").click(function() {
+        var productNo = $(this).attr('data-id');
+        console.log(productNo);
+    });
+}
+   
+
 
 
 

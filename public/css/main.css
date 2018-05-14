@@ -257,7 +257,8 @@ input, textarea {
     height: 2.25rem;
     width: 2.25rem;
     border-radius: 50%;
-    background-size: contain;
+    background-size: cover;
+    
   }
   
   .comment-block {
@@ -317,3 +318,12 @@ input, textarea {
     pointer-events: none;
 }
 a {text-decoration:none}
+
+.btnsComment{
+    width: 40%;
+    height:  20%; 
+    font-size: 50%;
+    
+    text-align: center;
+    margin-top: 2px;
+}

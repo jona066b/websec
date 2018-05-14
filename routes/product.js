@@ -165,16 +165,17 @@ router.get("/:productNo/comments", function(req, res, next){
     var checkedParams = parameterChecker.check(req, inputParams);
 
     var productNo = checkedParams[0];
-    var sQuery = "SELECT c.comment, c.commentCreateDateTime, u.userName FROM comment" +
+    var sQuery = "SELECT c.commentNo, c.comment, c.commentCreateDateTime, u.userName, u.Image, u.userNo FROM comment AS c" +
         " JOIN user AS u ON c.userNo = u.userNo" +
         " WHERE c.productNo = ?";
     dbController.query(sQuery, [productNo], (err, jData) => {
         if(err){
-            console.log(err);
+            console.log(jData);
             return res.send(err);
         }
         console.log(jData);
         return res.send(jData);
     });
 });
+
 module.exports = router;
