@@ -316,3 +316,4 @@ input, textarea {
     opacity: 0.6;
     pointer-events: none;
 }
+a {text-decoration:none}

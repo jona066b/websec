@@ -148,6 +148,25 @@ app.get("/selected-product/:UID", (req, res) => {
 
 });
 
+app.get("/resend-activataion-token", (req, res) => {
+    var sResendHtml = fs.readFileSync( __dirname + '/views/resendActivationLink.html', 'utf8' );
+
+    res.send(sResendHtml);
+});
+
+app.get("/password-reset", (req, res) => {
+    var sPasswordRest = fs.readFileSync( __dirname + '/views/sendPasswordReset.html', 'utf8' );
+
+    res.send(sPasswordRest);
+})
+
+app.get("/password-reset/:token", (req, res) => {
+    var sPasswordReset = fs.readFileSync( __dirname + '/views/PasswordReset.html', 'utf8' );
+
+    res.send(sPasswordReset);
+});
+
+
 
 /***********************Routes***********************/
 app.use("/user", accountRoute);

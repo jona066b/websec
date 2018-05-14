@@ -5,10 +5,12 @@ const router = express.Router();
 const jwt = require("jwt-simple");
 const nodemailer = require('nodemailer');
 const appsettings = require("../appsettings.json");
+const fs = require("fs");
+const path = require('path');
 /*******************************************************/
 
 /************************Modules************************/
-const dbController = require(__dirname+ "/database/databaseController.js");
+const dbController = require("../database/databaseController.js");
 const hasher = require("../helpers/hasher.js");
 const parameterChecker = require("../helpers/parameterChecker.js");
 const imageHandler = require("../helpers/imageHandler.js");
@@ -16,6 +18,8 @@ const imageHandler = require("../helpers/imageHandler.js");
 const jwtSercret = appsettings.jwtSecret;
 const shopEmail = appsettings.mailInformation.email;
 const shopPW = appsettings.mailInformation.password;
+
+router.use("/public", express.static("public"));
 /******************************************************/
 
 /************************APIS************************/
@@ -123,6 +127,8 @@ router.post("/" , function(req, res, next){
 });
 
 router.get("/verify-account/:token", function(req, res, next){
+    var status;
+    var sActiveHtml = fs.readFileSync(path.join(__dirname, '..', '/views/accountActivation.html' ), 'utf8');
     var token = req.sanitize(req.params.token);
     console.log(token)
     if(token != ""){
@@ -131,9 +137,11 @@ router.get("/verify-account/:token", function(req, res, next){
         var sQuery = "SELECT tokenNo FROM token WHERE userNo = ?";
         dbController.query(sQuery, [userNo], (err, jData) => {
             if(err){
-                console.log(err);
+                console.log(jData);
+                status = "Something went wrong";
+                sActiveHtml = sActiveHtml.replace('{{status}}', status);
                 res.status(500);
-                return res.send(JSON.stringify({response: "Something went wrong"}));
+                return res.send(sActiveHtml);
             } else {
                 console.log(jData);
                 if(jData.length > 0){
@@ -141,23 +149,31 @@ router.get("/verify-account/:token", function(req, res, next){
                     sQuery = "call AddUpdateToken(?, ?, ?)";
                     dbController.query(sQuery, [tokenNo, token, userNo], (err, jData) =>{
                         if(err){
-                            console.log(err);
+                            console.log(jData);
+                            status = "Something went wrong";
+                            sActiveHtml = sActiveHtml.replace('{{status}}', status);
                             res.status(500);
-                            return res.send(JSON.stringify({response: "Something went wrong"}));
+                            return res.send(sActiveHtml);
                         } else {
                             var tokenStatus = jData[0][0].tokenStatus;
-                            if(tokenStatus == -1){
-                                res.status(405);
-                                return res.send(JSON.stringify({response: "Token has expired or already been used!"}));
+                            if(tokenStatus == -1){ 
+                               status = "Token has expired or already been used!"
+                               sActiveHtml = sActiveHtml.replace('{{status}}', status);
+                               res.status(405);
+                               return res.send(sActiveHtml);
                             } else {
+                                status = "Your account has been activated";
+                                sActiveHtml = sActiveHtml.replace('{{status}}', status);
                                 res.status(200);
-                                return res.send(JSON.stringify({response: "Your account has been activated"}));
+                                return res.send(sActiveHtml);
                             }
                         }
                     });
                 } else {
+                    status = "Token has expired or already been used!";
+                    sActiveHtml = sActiveHtml.replace('{{status}}', status);
                     res.status(405);
-                    return res.send(JSON.stringify({response: "Token has expired or already been used!"}));
+                    return res.send(sActiveHtml);
                 }
             }
         });
@@ -181,8 +197,9 @@ router.post("/login", function(req, res, next){
             "JOIN role AS r ON u.roleNo = r.roleNo WHERE userName = ?";
         dbController.query(sQuery, [userName], (err, jData) => {
             if(err){
-                console.log(err);
-                return res.send(err);
+                console.log(jData);
+                res.status(500);
+                return res.send(JSON.stringify({response: "Something went wrong!"}));
             }
             var numRows = jData.length;
             if (numRows === 0) {
@@ -193,17 +210,19 @@ router.post("/login", function(req, res, next){
                 var dbHash = jData[0].password;
                 var sResult = hasher.verifyPw(password, dbSalt, dbHash);
                 var jResult = JSON.parse(sResult);
-                if(jResult.status == false){
+                console.log(jResult);
+                if(jResult.status == false && jData[0].status != 0){
                     var ipAddress = req.connection.remoteAddress;
                     var accountStatus = 'FAIL';
                     sQuery = "call LogLogins(?, ?, ?)";
                     dbController.query(sQuery, [ipAddress, jData[0].userNo, accountStatus], (err, jData2) => {
                         if(err){
-                            console.log(err);
+                            console.log(jData2);
                             res.status(500);
                             return res.send(JSON.stringify({response: "Something went wrong!"}));
                         } else {
-                            if(jData2[0][0].accountStatus == "BLOCKED"){
+                            var userStatus = jData[0].status;
+                            if(jData2[0][0].accountStatus == "BLOCKED" && userStatus != 0){
                                 var email = jData[0].email;
                                 var userNo = jData[0].userNo;
 
@@ -244,7 +263,7 @@ router.post("/login", function(req, res, next){
                                             };
                                             mailTransporter.sendMail(mailOptions, function(err, info){
                                                 if(err){
-                                                    console.log(err);
+                                                    console.log(info);
                                                     res.status(500);
                                                     return res.send(JSON.stringify({response: "Something went wrong!"}));
                                                 } else{
@@ -266,7 +285,10 @@ router.post("/login", function(req, res, next){
                             }
                         }
                     });
-                } else {
+                } else if(jResult.status == false) {
+                    res.status(403);
+                    return res.send(JSON.stringify({response: "Username or Password is incorrect!"}));
+                }else {
                     var accountStatus = jData[0].status;
                     console.log("status" + accountStatus);
                     if(accountStatus == 0){
@@ -278,7 +300,7 @@ router.post("/login", function(req, res, next){
                         sQuery = "call LogLogins(?, ?, ?)";
                         dbController.query(sQuery, [ipAddress, jData[0].userNo, accountStatus], (err, jData2) => {
                             if(err){
-                                console.log(err);
+                                console.log(jData2);
                                 res.status(500);
                                 return res.send(JSON.stringify({response: "Something went wrong!"}));
                             } else {
@@ -318,7 +340,7 @@ router.post("/login", function(req, res, next){
                                             };
                                             mailTransporter.sendMail(mailOptions, function(err, info){
                                                 if(err){
-                                                    console.log(err);
+                                                    console.log(info);
                                                     res.status(500);
                                                     return res.send(JSON.stringify({response: "Something went wrong!"}));
                                                 } else{
@@ -360,77 +382,103 @@ router.post("/login", function(req, res, next){
 
 });
 
-
 router.get("/unblock-account/:token", function(req, res, next){
+    var status;
     var token = req.sanitize(req.params.token);
+    var sActiveHtml = fs.readFileSync(path.join(__dirname, '..', '/views/accountActivation.html' ), 'utf8');
     if(token != ""){
         var data = jwt.decode(token, jwtSercret, 'HS256');
-        res.status(404);
-        return res.send(JSON.stringify({response: "Bad request!"}));
         var userNo = data.userNo;
         var sQuery = "SELECT tokenNo FROM token WHERE userNo = ?";
         dbController.query(sQuery, [userNo], (err, jData) => {
             if(err){
                 console.log(jData);
+                status = "Something went wrong";
+                sActiveHtml = sActiveHtml.replace('{{status}}', status);
                 res.status(500);
-                return res.send(JSON.stringify({response: "Something went wrong!"}));
+                return res.send(sActiveHtml);
             } else {
                 if(jData.length > 0){
                     var tokenNo = jData[0].tokenNo;
                     sQuery = "call AddUpdateToken(?, ?, ?)";
                     dbController.query(sQuery, [tokenNo, token, userNo], (err, jData2) => {
                         if(err){
-                            console.log(jData)
+                            console.log(jData);
+                            status = "Something went wrong";
+                            sActiveHtml = sActiveHtml.replace('{{status}}', status);
                             res.status(500);
-                            return res.send(JSON.stringify({response: "Something went wrong!"}));
+                            return res.send(sActiveHtml);
                         } else {
-                            var tokenStatus = jData[0][0].tokenStatus;
+                            var tokenStatus = jData2[0][0].tokenStatus;
                             if(tokenStatus == -1){
+                                status = "Token has expired or already been used!"
+                                sActiveHtml = sActiveHtml.replace('{{status}}', status);
                                 res.status(405);
-                                return res.send(JSON.stringify({response: "Token has expired or already been used!"}));
+                                return res.send(sActiveHtml);
                             } else {
-                                res.status(200);
-                                return res.send(JSON.stringify({response: "Your account has been activated"}));
+                                var failedAttempts = 0;
+                                sQuery = "UPDATE loggin_attempt SET failedAttempts = ? WHERE userNo = ?";
+                                dbController.query(sQuery, [failedAttempts, userNo], (err, jData) => {
+                                    if(err){
+                                        console.log(jData);
+                                        status = "Something went wrong";
+                                        sActiveHtml = sActiveHtml.replace('{{status}}', status);
+                                        res.status(500);
+                                        return res.send(sActiveHtml);
+                                    } else {
+                                        status = "Your account has been activated";
+                                        sActiveHtml = sActiveHtml.replace('{{status}}', status);
+                                        res.status(200);
+                                        return res.send(sActiveHtml);
+                                    }
+                                });
                             }
                         }
                     });
                 } else {
+                    status = "Token has expired or already been used!"
+                    sActiveHtml = sActiveHtml.replace('{{status}}', status);
                     res.status(405);
-                    return res.send(JSON.stringify({response: "Token has expired or already been used!"}));
+                    return res.send(sActiveHtml);
                 }
             }
         });
     } else {
+        status = "Bad request! Token value is invalid"
+        sActiveHtml = sActiveHtml.replace('{{status}}', status);
         res.status(400);
-        return res.send(JSON.stringify({response: "Bad request! Token value is invalid"}));
+        return res.send(sActiveHtml);
     }
 
 });
 
-
-
 router.get("/verify-new-location/:token", function(req, res, next){
     var token = req.sanitize(req.params.token);
+    var sActiveHtml = fs.readFileSync(path.join(__dirname, '..', '/views/accountActivation.html' ), 'utf8');
     if(token != ""){
         var data = jwt.decode(token, jwtSercret, 'HS256');
         var userNo = data.userNo;
         var newLocation = data.newLocation;
         var loggin_status = 0;
-
         var sQuery = "UPDATE loggin_attempt SET ipAddress = ?, loggin_status = ? WHERE userNo = ?";
         dbController.query(sQuery, [newLocation, loggin_status, userNo], (err, jData) => {
             if(err){
-                console.log(err);
+                status = "Something went wrong";
+                sActiveHtml = sActiveHtml.replace('{{status}}', status);
                 res.status(500);
-                return res.send(JSON.stringify({response: "Something went wrong!"}));
+                return res.send(sActiveHtml);
             } else {
+                status = "New location confirmed!";
+                sActiveHtml = sActiveHtml.replace('{{status}}', status);
                 res.status(200);
-                return res.send(JSON.stringify("New location confirmed!"));
+                return res.send(sActiveHtml);
             }
         });
     } else {
+        status = "Bad request! Token value is invalid";
+        sActiveHtml = sActiveHtml.replace('{{status}}', status);
         res.status(400);
-        return res.send(JSON.stringify({response: "Bad request! Token value is invalid"}));
+        return res.send(sActiveHtml);
     }
 });
 
@@ -438,7 +486,7 @@ router.get("/verify-new-location/:token", function(req, res, next){
 router.post("/resend-activataion-token", function(req, res, next) {
     var email = req.sanitize(req.body.email);
     if(email != ""){
-        var sQuery = "SELECT userNo FROM user WHERE email = ?";
+        var sQuery = "SELECT userNo, status, userName FROM user WHERE email = ?";
         dbController.query(sQuery, [email], (err, jData) => {
             if(err){
                 console.log(err);
@@ -446,59 +494,66 @@ router.post("/resend-activataion-token", function(req, res, next) {
                 return res.send(JSON.stringify({response: "Something went wrong!"}));
             } else {
                 if(jData.length > 0){
-                    var userNo = jData[0].userNo;
-                    var payload = {
-                        userNo: userNo
-                    };
-                    try {
-                        var token = jwt.encode(payload, jwtSercret, 'HS256');
-                        var sp = "call AddUpdateToken(?, ?, ?)";
-                        dbController.query(sp, [null, token, userNo], (err, jData) => {
-                            if(err){
-                                console.log(err);
-                                res.status(500);
-                                return res.send(JSON.stringify({response: "Something went wrong!"}));
-                            } else {
-                                var url = 'https://localhost:8443/user/verify-account/' + token;
-                                var mailTransporter = nodemailer.createTransport({
-                                    service: 'gmail',
-                                    host: 'smtp.gmail.com',
-                                    port: 465,
-                                    secure: true,
-                                    auth:   {
-                                        user: shopEmail,
-                                        pass: shopPW
-                                    }
-                                });
-
-                                const mailOptions = {
-                                    from : 'webshopincorp_do_not_reply@gmail.com',
-                                    to: email,
-                                    subject: '[WebShopINC] Please verify your email address. ',
-                                    html: '<p> Welcome to our webshop, ' + '<b>' +userName + '</b>' +'<p>\r\n' +
-                                    'Please click on the following link to activate your account: <a href="' + url +'" >Activate your account</a>\r\n' +
-                                    '<p> Sincerely yours,</p>\r\n' +
-                                    '<p>webshop.com </p>'
-                                };
-                                mailTransporter.sendMail(mailOptions, function(err, info){
-                                    if(err){
-                                        console.log(err);
-                                        res.status(500);
-                                        return res.send(JSON.stringify({response: "Something went wrong!"}));
-                                    } else{
-                                        console.log(info);
-                                        res.status(200);
-                                        return res.send(JSON.stringify({response: "A new activation link as been sent to your email!"}));
-                                    }
-                                });
-                            }
-                        });
-                    } catch (error) {
-                        console.log(error);
-                        res.status(500);
-                        return res.send(JSON.stringify({response: "Something went wrong!"}));
+                    var status = jData[0].status;
+                    if(status == 1){
+                        res.status(200);
+                        return res.send(JSON.stringify({response: "Your account is already active"}));
                     }
-
+                    else {
+                        var userNo = jData[0].userNo;
+                        var userName = jData[0].userName;
+                        var payload = {
+                            userNo: userNo
+                        };
+                        try {
+                            var token = jwt.encode(payload, jwtSercret, 'HS256');
+                            var sp = "call AddUpdateToken(?, ?, ?)";
+                            dbController.query(sp, [null, token, userNo], (err, jData) => {
+                                if(err){
+                                    console.log(err);
+                                    res.status(500);
+                                    return res.send(JSON.stringify({response: "Something went wrong!"}));
+                                } else {
+                                    var url = 'https://localhost:8443/user/verify-account/' + token;
+                                    var mailTransporter = nodemailer.createTransport({
+                                        service: 'gmail',
+                                        host: 'smtp.gmail.com',
+                                        port: 465,
+                                        secure: true,
+                                        auth:   {
+                                            user: shopEmail,
+                                            pass: shopPW
+                                        }
+                                    });
+    
+                                    const mailOptions = {
+                                        from : 'webshopincorp_do_not_reply@gmail.com',
+                                        to: email,
+                                        subject: '[WebShopINC] Please verify your email address. ',
+                                        html: '<p> Welcome to our webshop, ' + '<b>' +userName + '</b>' +'<p>\r\n' +
+                                        'Please click on the following link to activate your account: <a href="' + url +'" >Activate your account</a>\r\n' +
+                                        '<p> Sincerely yours,</p>\r\n' +
+                                        '<p>webshop.com </p>'
+                                    };
+                                    mailTransporter.sendMail(mailOptions, function(err, info){
+                                        if(err){
+                                            console.log(err);
+                                            res.status(500);
+                                            return res.send(JSON.stringify({response: "Something went wrong!"}));
+                                        } else{
+                                            console.log(info);
+                                            res.status(200);
+                                            return res.send(JSON.stringify({response: "A new activation link as been sent to your email!"}));
+                                        }
+                                    });
+                                }
+                            });
+                        } catch (error) {
+                            console.log(error);
+                            res.status(500);
+                            return res.send(JSON.stringify({response: "Something went wrong!"}));
+                        }
+                    }
                 } else {
                     res.status(404);
                     return res.send(JSON.stringify({response: "A user with the specified email does not exist"}));
@@ -565,9 +620,10 @@ router.put("/:userNo", function(req,res,next){
     }
 });
 
-router.put("/password-reset/:token", function(req, res, next){
+router.post("/password-reset/:token", function(req, res, next){
     var token = req.sanitize(req.params.token);
     var newPassword = req.sanitize(req.body.newPassword);
+    
     if(token !== "" && newPassword != ""){
         var data = jwt.decode(token, jwtSercret, 'HS256');
         var userNo = data.userNo;
@@ -627,7 +683,7 @@ router.put("/password-reset/:token", function(req, res, next){
 router.post("/send-password-reset-link", function(req, res, next){
     var email = req.sanitize(req.body.email);
     if(email !== ""){
-        var sQuery = "SELECT userNo FROM user WHERE email = ?";
+        var sQuery = "SELECT userNo, userName FROM user WHERE email = ?";
         dbController.query(sQuery, [email], (err, jData) => {
             if(err){
                 console.log(err);
@@ -637,6 +693,7 @@ router.post("/send-password-reset-link", function(req, res, next){
                 console.log(jData);
                 if(jData.length > 0){
                     var userNo = jData[0].userNo;
+                    var userName = jData[0].userName;
                     var payload = {
                         userNo: userNo
                     };
@@ -649,7 +706,7 @@ router.post("/send-password-reset-link", function(req, res, next){
                                 res.status(500);
                                 return res.send(JSON.stringify({response: "Something went wrong!"}));
                             } else {
-                                var url = 'https://localhost:8443/user/password-reset/' + token;
+                                var url = 'https://localhost:8443/password-reset/' + token;
                                 var mailTransporter = nodemailer.createTransport({
                                     service: 'gmail',
                                     host: 'smtp.gmail.com',
