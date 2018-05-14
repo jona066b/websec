@@ -55,6 +55,7 @@
                         <input type="password" name="password" id="password" class="form-control validate">
                     </div>
                     <button class="btn btn-dark my-2 my-sm-0 w-100 mr-3 text-uppercase" type="button" id="btnLogin">Login</button>
+                    <span class="err-msg" id="forgotPassword"><a href="/password-reset">Forgot password?</a></span>
                     <span class="err-msg" id="login-err-msg"></span>
                 </form>
             </div>
@@ -111,7 +112,7 @@
                     </div>
                     <button class="btn btn-dark my-2 my-sm-0 w-100 mr-3 text-uppercase" id="btnRegister" type="submit">Register</button>
                     <span class="err-msg" id="register-err-msg"></span>
-                    <span class="success-msg d-none" id="register-success-msg">You have been successfully registered in our system! <a href="#" id="proceed-to-login">You can proceed to login</a></span>
+                    <span class="success-msg d-none" id="register-success-msg">You have been successfully registered in our system! A verification link has been sent to your email <a href="#" id="proceed-to-login">You can proceed to login</a></span>
                 </form>
             </div>
         </div>
