@@ -27,7 +27,7 @@ app.use(session({
     rolling: true,
     resave: true,
     saveUninitialized: true,
-    cookie: { secure: true, maxAge: 60000, httpOnly: true }
+   
 }));
 app.use(cookieParser(appSettings.sessionSecret));
 app.use(bodyParser.json());
