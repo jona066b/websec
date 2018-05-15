@@ -59,7 +59,8 @@ router.post("/" , function(req, res, next){
             pwHashSalt, pwSalt, imageName, roleName], (err, jData) => {
             if(err){
                 console.log(err);
-                res.send(err);
+                res.status(500);
+                res.send(JSON.stringify({response: "Something went wrong!"}));
             }
             if(jData[1].length > 0){
                 var newUser = JSON.stringify(jData[1][0]);

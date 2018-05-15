@@ -330,3 +330,18 @@ a {text-decoration:none}
 #captchaDiv {
     margin-left: 15%;
 }
+.staffMemberIcon{
+    width: 25px;
+    height: 25px;
+}
+
+.staff-grid .row{
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-flow: wrap;
+    width: 80%;
+    height: 100%;
+    margin-left: 100px;
+}

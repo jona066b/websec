@@ -122,7 +122,7 @@ app.get("/profile", (req, res) => {
             break;
             case "Admin":
                     sMainHtml = fs.readFileSync( __dirname + '/views/admin.html', 'utf8' );
-                    sMainHtml = sMainHtml.replace('{{user}}', req.session.name);
+                    sMainHtml = sMainHtml.replace('{{user}}', req.session.name);                  
                     return res.send(sTopHtml + sMainHtml + sBottomHtml);
             break;
             case "Support":
@@ -134,11 +134,36 @@ app.get("/profile", (req, res) => {
      } else {
         
         res.status(403);
-        res.redirect("/");
+        return res.redirect("/");
         //console.log(req.session);
     }
 });
 
+
+app.get("/staff", (req, res) => {
+    console.log(req.session);
+    if(req.session != null && req.session.isLoggedIn == true && req.session.isInRole == "Admin"){
+        var sTopHtml = fs.readFileSync( __dirname + '/public/components/top.html', 'utf8' );
+        var sStaffHtml = fs.readFileSync( __dirname + '/views/staff-overview.html', 'utf8' );
+        var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
+
+        sTopHtml = sTopHtml.replace("{{title}}", "Staff members");
+
+        sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>' +
+        '<script src="../public/javascript/logout.js"></script>' + 
+        '<script src="../public/javascript/general.js"></script>' +
+        '<script src="../public/javascript/shop.js"></script>' +
+        '<script src="../public/javascript/homePage.js"></script>' +
+        '<script src="../public/javascript/staff-overview.js"></script>' +
+        '<script src="https://www.google.com/recaptcha/api.js"></script>')
+
+        res.status(200);
+        return res.send(sTopHtml + sStaffHtml + sBottomHtml);
+    } else {
+        res.status(403);
+        return res.redirect("/");
+    }
+})
 app.get("/selected-product/:UID", (req, res) => {
     var selectedProductID = req.sanitize(req.params.UID);
     var sTopHtml = fs.readFileSync( __dirname + '/public/components/top.html', 'utf8' );
