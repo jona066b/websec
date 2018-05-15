@@ -22,10 +22,18 @@ $(function() {
 function showUser(data) {
     var htmlUserSection = "";
     var htmlUser="";
+    var userImage;
+    
+    if(data[0].image != null && data[0].image != ""){
+        userImage = "../public/images/uploads/" + data[0].image;
+    } else {
+        userImage = "../public/images/uploads/defaultIcon.png";
+    }
+    console.log(userImage)
     $("#lblProfileSection").html("");
     htmlUser =   '<div class="row">\
                                 <div class="col-sm">\
-                                    <img src="../public/images/uploads/'+data[0].image+'" width="250" height="250" alt="avatar">\
+                                    <img src="'+userImage+'" width="250" height="250" alt="avatar">\
                                 </div>\
                                 <div class="col-sm">\
                                     <div class="name">\

@@ -6,9 +6,16 @@ const session = require('express-session');
 const cookieParser = require("cookie-parser");
 const expressSanitizer = require("express-sanitizer");
 const fs = require("fs");
+const Recaptcha = require("express-recaptcha").Recaptcha;
 const https = require("https");
 
-var appSettings = require(__dirname + "/appsettings.json");
+const appSettings = require(__dirname + "/appsettings.json");
+
+const site_key = appSettings.appKeys.site_key;
+const secret_key = appSettings.appKeys.secret_key;
+
+const recaptcha = new Recaptcha(site_key, secret_key);
+
 
 const app = express();
 if (app.get('env') === 'production') {
@@ -25,7 +32,7 @@ app.use(session({
 app.use(cookieParser(appSettings.sessionSecret));
 app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/*+json' }));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({"extended":true}));
 app.use("/public", express.static("public"));
 app.use(expressSanitizer());
 
@@ -47,7 +54,7 @@ const options = {
 /****************************************************/
 
 /***********************Views***********************/
-app.get("/", (req, res) => {
+app.get("/", recaptcha.middleware.render ,(req, res) => {
     var sTopHtml = fs.readFileSync( __dirname + '/public/components/top.html', 'utf8' );
     var sMainHtml = fs.readFileSync( __dirname + '/views/index.html', 'utf8' );
     var sBottomHtml = fs.readFileSync( __dirname + '/public/components/bottom.html', 'utf8' );
@@ -61,8 +68,10 @@ app.get("/", (req, res) => {
         '<script src="../public/javascript/login.js"></script>' +
         '<script src="../public/javascript/logout.js"></script>' +
         '<script src="../public/javascript/register.js"></script>' +
-        '<script src="../public/javascript/homePage.js"></script>');
-    res.send( sTopHtml + sMainHtml + sBottomHtml );
+        '<script src="../public/javascript/homePage.js"></script>' +
+        '<script src="https://www.google.com/recaptcha/api.js"></script>');
+    return res.send( sTopHtml + sMainHtml + sBottomHtml );
+  
     res.end();
 });
 
@@ -170,7 +179,7 @@ app.get("/password-reset/:token", (req, res) => {
 
 
 /***********************Routes***********************/
-app.use("/user", accountRoute);
+app.use("/user", recaptcha.middleware.verify, accountRoute);
 app.use("/product", productRoute);
 app.use("/admin", adminRoute);
 app.use("/order", orderRoute);

@@ -31,7 +31,6 @@ $(function() {
         // TO DO ON DONE
         //console.log("Success");
         //console.log("data", data);
-        console.log(data);
         showComments(data);
 
     }).fail(function(data, textStatus, xhr) {
@@ -96,7 +95,6 @@ function showComments(jData){
                             </div>';
     }
     for (let i = 0; i < jData.length; i++) {
-        console.log(jData);
         var userImages = "";
         if(jData[i].Image != "" && jData[i].Image != null){
             userImages = "../public/images/uploads/" + jData[i].Image;
@@ -116,8 +114,9 @@ function showComments(jData){
             var sBtnUpdate = '<button class="btnsComment btn btn-gold my-2 my-sm-0 text-uppercase d-none" type="button" >Update</button>'
             if(sessionVars !== null){
                 if(jData[i].userNo === sessionVars.userNo){
-                    sBtnDelete = '<button data-id="' + jData[i].commentNo +'" id="btnDeleteComment" class="btnsComment btn btn-gold my-2 my-sm-0 text-uppercase" type="button">Delete</button>'
-                    sBtnUpdate = '<button data-id="' + jData[i].commentNo +'" id= "btnUpdateComment" class="btnsComment btn btn-gold my-2 my-sm-0 text-uppercase" type="button" >Update</button>'
+                    sBtnDelete = '<button data-id="' + jData[i].commentNo +'" class="btnDeleteComment btnsComment btn btn-gold my-2 my-sm-0 text-uppercase" type="button">Delete</button>'
+                    sBtnUpdate = '<button data-id="' + jData[i].commentNo +'" class="btnUpdateComment btnsComment btn btn-gold my-2 my-sm-0 text-uppercase" data-toggle="modal" data-target="#modalCommentForm" type="button" >Update</button>'
+                    
                 }
             }
             
@@ -158,35 +157,10 @@ function addComment() {
         //console.log(sjComment);
 
         $.post( '/user/comment' , sjComment , function( data ){
-        }).done(function(jComment) {
+        }).done(function(data) {
             // TO DO ON DONE
-             console.log("Success");
-            
-            var createTime = new Date(jComment[0][0].commentCreateDateTime);
-            var locale = "en-us";
-            var minutes = createTime.getMinutes();
-            if (minutes < 10) {
-                minutes = "0" + minutes;
-            }
-            var formatDate = createTime.toLocaleString(locale, {month: "long"}) + " " + createTime.getDate() + ", "
-                + createTime.getFullYear() + " @ " + createTime.getHours() + ":" + minutes;
-            //console.log(formatDate);
-            var htmlComment =   '<div class="comment-wrap">\
-                            <div class="photo">\
-                                <div class="avatar" style="background-image: url(https://crimsonems.org/wp-content/uploads/2017/10/profile-placeholder.gif")"></div>\
-                            </div>\
-                            <div class="comment-block">\
-                                <p class="comment-text">' + jComment[0][0].comment +'</p>\
-                                <div class="bottom-comment">\
-                                <div class="comment-date">' + formatDate +'</div>\
-                                <ul class="comment-actions">\
-                                    <li class="complain">By ' + jComment[0][0].email + '</li>\
-                                </ul>\
-                            </div>\
-                        </div>\
-                    </div>';
-            $("#comments").append(htmlComment);
-            $("#comments").load("#comments");
+            console.log(data);
+            showComments(data[0]);
     
         }).fail(function(data, textStatus, xhr) {
             //This shows status code eg. 403
@@ -205,9 +179,6 @@ function addComment() {
 }
 
 function showProduct(data) {
-    console.log(data);
-
-
     var htmlShopProduct = "";
     $("#product-container").html("");
     htmlShopProduct =   '<div class="card" style="width: 30rem; height: 50rem;">\
@@ -226,32 +197,45 @@ function showProduct(data) {
     $("#product-container").html(htmlShopProduct);
 }
 
-
-
 function btnDleteComment() {
-    $("#btnDeleteComment").click(function() {
-        var commentNo = $(this).attr('data-id');
-        $.ajax({
-            url: "/user/comment/" + commentNo,
-            type: "DELETE",
-            contentType: "application/json", 
-            dataType: "json", 
-            success: function(data){
+    var commentNo = ""
+    $(".btnDeleteComment").each(function(btnDelete){
+        $(this).on("click", function() {
+            commentNo = $(this).attr('data-id');
+            console.log(commentNo);
+            $.get( "/user/delete-comment/" + commentNo + "/product/" + productId , function( data ){
+            }).done(function( data ){
                 console.log(data);
+                showComments(data[0]);
                 
-            }, 
-            error: function(data){
+            }).fail(function(data, textStatus, xhr){
                 console.log(data);
-            }
+            }); 
         });
-    });
-    
+    });           
 }
 
 function btnUpdateComment() {
+    var comment = "";
+    $(".btnUpdateComment").each(function(btnDelete){
+        $(this).on("click", function() {
+            commentNo = $(this).attr('data-id');
+            
+        });
+    });
     $("#btnUpdateComment").click(function() {
-        var productNo = $(this).attr('data-id');
-        console.log(productNo);
+        var sCookie = localStorage.getItem("cookie");
+        var jCookie = JSON.parse(sCookie);
+        var jUpdateComment = {"comment":txtComment,"userNo": jCookie.userNo, "productNo": productId};
+        $.post("/user/comment/" + commentNo, jUpdateComment, function(data){
+            console.log(data);
+        }).done(function(data){
+            $('.modal').modal('hide');
+            showComments(data[0]);
+            console.log(data);
+        }).fail(function(data){
+            console.log(data);
+        });
     });
 }
    

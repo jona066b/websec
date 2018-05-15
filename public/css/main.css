@@ -327,3 +327,6 @@ a {text-decoration:none}
     text-align: center;
     margin-top: 2px;
 }
+#captchaDiv {
+    margin-left: 15%;
+}

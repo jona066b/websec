@@ -184,6 +184,7 @@ router.get("/verify-account/:token", function(req, res, next){
 });
 
 router.post("/login", function(req, res, next){
+    console.log(req.recaptcha);
     var inputParams = [];
     inputParams.push(req.body.userName, req.body.password);
     var checkedParams = parameterChecker.check(req, inputParams);
@@ -358,7 +359,7 @@ router.post("/login", function(req, res, next){
                                         res.status(401);
                                         return res.send(JSON.stringify({response: "Your account is still blocked! Please check your email for further instructions!"}));
                                     }
-                                } else {
+                                } else if(!req.recaptcha.error){
                                     res.status(200);
                                     req.session.isLoggedIn = true;
                                     req.session.isInRole = jData[0].roleName;
@@ -368,6 +369,9 @@ router.post("/login", function(req, res, next){
                                     req.session.image = jData[0].image;
                                     console.log(req.session);
                                     return res.send(JSON.stringify(req.session));
+                                } else {
+                                    res.status(401);
+                                    return res.send(JSON.stringify({response: "Please verify that you are not a robot"}));
                                 }
                             }
                         });
@@ -806,7 +810,7 @@ router.post("/comment", function(req, res, next){
     }
 });
 
-router.put("/comment/:commentNo", function(req, res, next){
+router.post("/comment/:commentNo", function(req, res, next){
     if(req.session == null && req.session.isLoggedIn === undefined){
         res.status(403);
         res.send(JSON.stringify({response: "You need to be logged in!"}));
@@ -838,23 +842,24 @@ router.put("/comment/:commentNo", function(req, res, next){
     }
 });
 
-router.delete("/comment/:commentNo", function(req, res, next){
+router.get("/delete-comment/:commentNo/product/:productNo", function(req, res, next){
     if(req.session == null && req.session.isLoggedIn === undefined){
         res.status(403);
         res.send(JSON.stringify({response: "You need to be logged in!"}));
     }
     if(req.session != null && req.session.isLoggedIn == true){
         var inputParams= [];
-        inputParams.push(req.params.commentNo);
+        inputParams.push(req.params.commentNo, req.params.productNo);
         var checkedParams = parameterChecker.check(req, inputParams);
 
         var commentNo = checkedParams[0];
+        var productNo = checkedParams[1];
         var userNo = req.session.userNo;
-        if(commentNo != "" && userNo != ""){
-            var sQuery = "DELETE FROM comment WHERE commentNo = ? AND userNo = ?";
-            dbController.query(sQuery, [commentNo, userNo], (err, jData) => {
+        if(commentNo != "" && userNo != "" && productNo != ""){
+            var sQuery = "call DeleteComment(?, ? , ?)";
+            dbController.query(sQuery, [commentNo, userNo, productNo], (err, jData) => {
                 if(err){
-                    console.log(err);
+                    console.log(jData);
                     res.status(500);
                     return res.send(JSON.stringify({response: "Something went wrong"}));
                 }
