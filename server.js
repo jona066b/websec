@@ -152,7 +152,7 @@ app.get("/selected-product/:UID", (req, res) => {
     sBottomHtml = sBottomHtml.replace('{{customScript}}',  '<script src="../public/javascript/general.js"></script>' +
         '<script src="../public/javascript/shop.js"></script>' +
     '<script src="../public/javascript/login.js"></script><script src="../public/javascript/logout.js"></script>' +
-    '</script><script src="../public/javascript/register.js"></script>' + '<script src="../public/javascript/singleProduct.js"></script>');
+    '<script src="../public/javascript/register.js"></script>' + '<script src="../public/javascript/singleProduct.js"></script>');
     res.send( sTopHtml + sMainHtml + sBottomHtml );
     res.end();
 

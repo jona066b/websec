@@ -79,7 +79,7 @@
                 </button>
             </div>
             <div class="modal-body mx-3">
-                <form id="frmRegister">
+                <form id="frmRegister" enctype="multipart/form-data" action="https://localhost:8443/user" method="post">
                     <div class="md-form mb-5">
                         <i class="fa fa-user prefix grey-text"></i>
                         <label data-error="wrong" data-success="right" for="new-user-name">Name</label>
@@ -115,7 +115,7 @@
                         <label data-error="wrong" data-success="right" for="new-user-image">Image</label>
                         <input type="file" id="new-user-image" name="image" class="form-control validate">
                     </div>
-                    <button class="btn btn-dark my-2 my-sm-0 w-100 mr-3 text-uppercase" id="btnRegister" type="button">Register</button>
+                    <button class="btn btn-dark my-2 my-sm-0 w-100 mr-3 text-uppercase" id="btnRegister" type="submit">Register</button>
                     <span class="err-msg" id="register-err-msg"></span>
                     <span class="success-msg d-none" id="register-success-msg">You have been successfully registered in our system! <a href="#" id="proceed-to-login">You can proceed to login</a></span>
                 </form>
